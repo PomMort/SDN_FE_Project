@@ -1,8 +1,13 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, Row, Col, Radio } from "antd";
-import "../Customer.css";
+import { Modal, Form, Input, Row, Col, Switch } from "antd";
 
-const CreateCounterModal = ({ visible, onCreate, onCancel, loading }) => {
+const CreateCounterModal = ({
+  visible,
+  onCreate,
+  onCancel,
+  loading,
+  counterData,
+}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -12,10 +17,10 @@ const CreateCounterModal = ({ visible, onCreate, onCancel, loading }) => {
   }, [form, visible]);
 
   return (
-    <div className="create-customer-page">
+    <div className="create-counter-modal">
       <Modal
-        open={visible}
-        title="Create a new customer"
+        visible={visible}
+        title="Create a new counter"
         okText="Create"
         cancelText="Cancel"
         onCancel={onCancel}
@@ -24,8 +29,9 @@ const CreateCounterModal = ({ visible, onCreate, onCancel, loading }) => {
           form
             .validateFields()
             .then((values) => {
-              values.AccumulatedPoint = 0;
+              values.isActive = !!values.isActive; // Convert to boolean
               onCreate(values);
+              form.resetFields();
             })
             .catch((info) => {
               console.log("Validate Failed:", info);
@@ -36,102 +42,48 @@ const CreateCounterModal = ({ visible, onCreate, onCancel, loading }) => {
           form={form}
           name="form_in_modal"
           initialValues={{
-            modifier: "public",
+            isActive: true, // Default isActive to true
           }}
         >
-          <Row>
-            <Col span={8}>
-              <p>Full Name:</p>
-            </Col>
-            <Col span={16}>
+          <Row gutter={16}>
+            <Col span={24}>
               <Form.Item
-                name="Name"
+                name="counterName"
+                label="Counter Name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the name of the customer!",
+                    message: "Please input the counter name!",
                   },
                 ]}
               >
-                <Input placeholder="Input the full name..." />
+                <Input placeholder="Enter counter name" />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <p>Address:</p>
-            </Col>
-            <Col span={16}>
+            <Col span={24}>
               <Form.Item
-                name="Address"
+                name="location"
+                label="Location"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the address of the customer!",
+                    message: "Please input the location!",
                   },
                 ]}
               >
-                <Input placeholder="Input the address..." />
+                <Input placeholder="Enter location" />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <p>Phone number:</p>
-            </Col>
-            <Col span={16}>
+            <Col span={24}>
               <Form.Item
-                name="Phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the phone number of the customer!",
-                  },
-                  {
-                    pattern: /^[0-9]{10}$/,
-                    message: "Please input a valid 10-digit phone number!",
-                  },
-                ]}
+                name="isActive"
+                label="Status"
+                valuePropName="checked"
+                initialValue={true}
               >
-                <Input placeholder="Input the phone number..." />
+                <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
               </Form.Item>
             </Col>
-            <Col span={8}>Gender</Col>
-            <Col span={16}>
-              <Form.Item
-                name="Gender"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please choose the gender!",
-                  },
-                ]}
-              >
-                <Radio.Group>
-                  <Radio value={0}> Male </Radio>
-                  <Radio value={1}> Female </Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            {/* <Col span={8}>
-              <p>Accumulated Points:</p>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name="AccumulatedPoint"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the accumulated points!",
-                  },
-                  {
-                    type: "number",
-                    message: "Please input a valid number!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Input accumulated points..."
-                  type="number"
-                />
-              </Form.Item>
-            </Col> */}
           </Row>
         </Form>
       </Modal>

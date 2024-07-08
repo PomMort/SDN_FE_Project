@@ -25,7 +25,7 @@ const MainLayout = () => {
     <div className="layout-container">
       <HeaderPage className="header" />
       <Layout className="content">
-        <Sider width="20%" trigger={null} collapsible collapsed={collapsed}>
+        <Sider width="15%" trigger={null} collapsible collapsed={collapsed}>
           <div
             style={{
               height: "100%",
@@ -38,7 +38,7 @@ const MainLayout = () => {
                 components: {
                   Menu: {
                     iconSize: "20px",
-                    itemHeight: "55px",
+                    itemHeight: "45px",
                     itemSelectedColor: "#ffffff",
                     itemSelectedBg: "#333333",
                     collapsedIconSize: "20px",

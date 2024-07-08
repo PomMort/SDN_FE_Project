@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { USER_API_URL } from "../config";
+import { API_URL } from "../config";
 import { selectToken } from "../slices/auth.slice";
 
 export const employeeAPI = createApi({
   reducerPath: "EmployeeManagement",
   tagTypes: ["EmployeeList"],
   baseQuery: fetchBaseQuery({
-    baseUrl: USER_API_URL,
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {
@@ -18,7 +18,7 @@ export const employeeAPI = createApi({
   }),
   endpoints: (builder) => ({
     getAllEmployee: builder.query({
-      query: () => `users`,
+      query: () => `Employee/GetAllEmployee`,
       providesTags: (result) =>
         result
           ? result.map(({ id }) => ({ type: "employeeList", id }))
@@ -32,18 +32,17 @@ export const employeeAPI = createApi({
 
     addEmployee: builder.mutation({
       query: (employee) => ({
-        url: "users",
+        url: "/Employee/AddNewEmployee",
         method: "POST",
         body: {
-          createdAt: new Date().toISOString(),
-          Name: employee.name,
-          Email: employee.email,
-          Phone: employee.phone,
-          RoleId: employee.role,
-          DoB: employee.dob,
-          CounterId: employee.counter,
-          Status: 1,
-          Gender: employee.gender,
+          name: employee.name,
+          email: employee.email,
+          phone: employee.phone,
+          roleId: employee.role,
+          // counterId: employee.counter,
+          counterId: 0,
+          employeeStatus: 1,
+          employeeGender: employee.gender,
         },
       }),
       invalidatesTags: [{ type: "Employee", id: "LIST" }],

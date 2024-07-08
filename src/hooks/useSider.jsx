@@ -45,6 +45,11 @@ const useSider = () => {
         href: "customer",
       },
       {
+        label: "Customer Policy",
+        icon: <UsergroupDeleteOutlined />,
+        href: "customer-policy",
+      },
+      {
         label: "Employee",
         icon: <UserOutlined />,
         href: "employee",

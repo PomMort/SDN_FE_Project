@@ -4,15 +4,18 @@ import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ButtonCreateProduct from "../../components/ButtonFilter/ButtonCreate";
 import CounterList from "./CounterManage/CounterList";
-import { useGetAllCountersQuery } from "../../services/counterAPI";
+import {
+  useGetAllCountersQuery,
+  useCreateCounterMutation,
+} from "../../services/counterAPI";
+import CreateCounterModal from "./CounterManage/CreateCounterModal";
 
 export default function Counter() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const { data: counterData, refetch, isFetching } = useGetAllCountersQuery();
+  const [createCounter] = useCreateCounterMutation();
 
   useEffect(() => {
     if (!isFetching && counterData) {
@@ -26,39 +29,32 @@ export default function Counter() {
     setSearchQuery(e.target.value);
   };
 
-  const filteredCounter = counterData?.filter((customer) =>
-    customer.Location.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter and sort counters
+  const filteredCounter = counterData?.filter((counter) =>
+    counter.counterName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // const handleCreate = async (values) => {
-  //   setLoading(true);
-  //   try {
-  //     await createCustomer(values).unwrap();
-  //     refetch();
-  //     setIsCreateModalVisible(false);
-  //   } catch (error) {
-  //     console.error("Failed to create customer:", error);
-  //   }
-  //   setLoading(false);
-  // };
+  const counterWithIdZero =
+    filteredCounter?.filter((counter) => counter.counterId === 0) || [];
 
-  // const handleUpdate = async (values) => {
-  //   setLoading(true);
-  //   try {
-  //     await updateCustomer(values).unwrap();
-  //     refetch();
-  //     setIsUpdateModalVisible(false);
-  //   } catch (error) {
-  //     console.error("Failed to update customer:", error);
-  //   }
-  //   setLoading(false);
-  // };
+  const otherCounters =
+    filteredCounter
+      ?.filter((counter) => counter.counterId !== 0)
+      .sort((a, b) => a.counterName.localeCompare(b.counterName)) || [];
 
-  // const handleEdit = (customer) => {
-  //   console.log(customer);
-  //   setSelectedCustomer(customer);
-  //   setIsUpdateModalVisible(true);
-  // };
+  const sortedCounters = [...counterWithIdZero, ...otherCounters];
+
+  const handleCreate = async (values) => {
+    setLoading(true);
+    try {
+      await createCounter(values).unwrap();
+      refetch();
+      setIsCreateModalVisible(false);
+    } catch (error) {
+      console.error("Failed to create counter:", error);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="counter-manage-page">
@@ -70,7 +66,7 @@ export default function Counter() {
           <Input
             style={{ borderRadius: 20, width: "350px" }}
             size="large"
-            placeholder="Search by name or phone number"
+            placeholder="Search by name..."
             prefix={<SearchOutlined />}
             value={searchQuery}
             onChange={handleSearchChange}
@@ -82,26 +78,16 @@ export default function Counter() {
           </div>
         </div>
       </div>
-      <div className="Customer-list">
-        <CounterList
-          counterData={filteredCounter}
-          loading={loading}
-          // handleEdit={handleEdit}
-        />
+      <div className="counter-list">
+        <CounterList counterData={sortedCounters} loading={loading} />
       </div>
-      {/* <CreateCustomerModal
+      <CreateCounterModal
         visible={isCreateModalVisible}
         onCreate={handleCreate}
         onCancel={() => setIsCreateModalVisible(false)}
         loading={loading}
+        counterData={counterData}
       />
-      <UpdateCustomerModel
-        visible={isUpdateModalVisible}
-        onCreate={handleUpdate}
-        onCancel={() => setIsUpdateModalVisible(false)}
-        loading={loading}
-        customer={selectedCustomer}
-      /> */}
     </div>
   );
 }

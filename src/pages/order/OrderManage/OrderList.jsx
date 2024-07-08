@@ -1,12 +1,46 @@
-import { Button, Table, Tag } from "antd";
+import { Button, Dropdown, Menu, Popconfirm, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 import React from "react";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useNavigate } from "react-router-dom";
 
-export default function OrderList({ orderData }) {
+export default function OrderList({ orderData, loading }) {
+  const navigate = useNavigate();
   const dataWithNo = orderData?.map((order, index) => ({
     ...order,
     no: index + 1,
   }));
+
+  const actionsMenu = (record) => (
+    <Menu>
+      <Menu.Item
+        key="detail"
+        className="submenu-usertable"
+        onClick={() => navigate(`/employee/${record.EmployeeId}`)}
+      >
+        <span>View Detail</span>
+      </Menu.Item>
+      <Menu.Item
+        key="edit"
+        className="submenu-usertable"
+        onClick={() => onEditEmployee(record)}
+      >
+        <span>Edit Employee</span>
+      </Menu.Item>
+      <Menu.Item key="remove">
+        <Popconfirm
+          title="Are you sure you want to remove this user?"
+          onConfirm={() => handleRemoveEmployee(record.EmployeeId)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <p className="submenu-usertable-dropdown-delete">
+            <span>Remove employee</span>
+          </p>
+        </Popconfirm>
+      </Menu.Item>
+    </Menu>
+  );
 
   const columns = [
     {
@@ -18,7 +52,12 @@ export default function OrderList({ orderData }) {
     {
       title: <div style={{ textAlign: "start" }}>Order Id</div>,
       dataIndex: "OrderId",
-      key: "order",
+      key: "orderId",
+    },
+    {
+      title: <div style={{ textAlign: "start" }}>Employee Id</div>,
+      dataIndex: "EmployeeId",
+      key: "EmployeeId",
     },
     {
       title: <div style={{ textAlign: "start" }}>Date</div>,
@@ -39,34 +78,37 @@ export default function OrderList({ orderData }) {
       ),
     },
     {
-      title: "Counter",
-      dataIndex: "CounterId",
-      key: "CounterId",
-      render: (CounterId) =>
-        CounterId ? `Counter ${CounterId}` : "No Counter",
+      title: <div style={{ textAlign: "center" }}>Status</div>,
+      key: "status",
+      dataIndex: "OrderStatus",
     },
     {
       width: 55,
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() => handleViewDetail(record)}>
-          View Detail
-        </Button>
+        <Space size="middle">
+          <Dropdown overlay={actionsMenu(record)} trigger={["click"]}>
+            <a
+              className="ant-dropdown-link"
+              onClick={(e) => e.preventDefault()}
+            >
+              <MoreHorizIcon style={{ color: "#333333" }} />
+            </a>
+          </Dropdown>
+        </Space>
       ),
     },
   ];
+
   return (
     <div>
-      <div className="header">Order History</div>
-      <hr></hr>
-
       <div style={{ marginTop: 10 }}>
         <Table
           columns={columns}
           dataSource={dataWithNo}
           rowKey="id"
           pagination={{ pageSize: 4 }}
-          //   loading={loading}
+          loading={loading}
         />
       </div>
     </div>

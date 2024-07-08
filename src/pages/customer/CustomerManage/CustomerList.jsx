@@ -50,25 +50,30 @@ export default function CustomerList({ customerData, loading, handleEdit }) {
     },
     {
       title: "Name",
-      dataIndex: "Name",
+      dataIndex: "name",
       key: "name",
     },
     {
       title: "Phone",
-      dataIndex: "Phone",
+      dataIndex: "phone",
       key: "phone",
     },
     {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
       title: "Address",
-      dataIndex: "Address",
+      dataIndex: "address",
       key: "address",
     },
     {
       title: <div style={{ textAlign: "center" }}>Gender</div>,
-      dataIndex: "Gender",
+      dataIndex: "customerGender",
       key: "Gender",
-      render: (Gender) =>
-        Gender === 0 ? (
+      render: (customerGender) =>
+        customerGender === 0 ? (
           <div style={{ textAlign: "center" }}>
             <i className="ri-user-fill" style={{ color: "#4f6c95" }}>
               <RiUserFill />
@@ -84,10 +89,10 @@ export default function CustomerList({ customerData, loading, handleEdit }) {
     },
     {
       title: <div style={{ textAlign: "center" }}>Accumulated Point</div>,
-      dataIndex: "AccumulatedPoint",
-      key: "point",
-      render: (AccumulatedPoint) => (
-        <div style={{ textAlign: "center" }}>{AccumulatedPoint}</div>
+      dataIndex: "accumulatedPoint",
+      key: "accumulatedPoint",
+      render: (accumulatedPoint) => (
+        <div style={{ textAlign: "center" }}>{accumulatedPoint}</div>
       ),
     },
     {

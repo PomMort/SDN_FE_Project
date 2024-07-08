@@ -150,6 +150,7 @@ export default function EmployeeList({
     </Menu>
   );
 
+  console.log(employeesData);
   const dataWithNo = employeesData?.map((item, index) => ({
     ...item,
     no: index + 1,
@@ -160,107 +161,109 @@ export default function EmployeeList({
     {
       title: "No",
       dataIndex: "no",
+      // align: "right",
       key: "no",
       width: 55,
     },
     {
-      title: <div style={{ textAlign: "start" }}>Name</div>,
-      dataIndex: "Name",
-      key: "Name",
+      title: "Name",
+      dataIndex: "name",
+      align: "left",
+      key: "name",
     },
     {
-      title: <div style={{ textAlign: "start" }}>Email</div>,
-      dataIndex: "Email",
-      key: "Email",
+      title: "Email",
+      align: "left",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Phone",
-      dataIndex: "Phone",
-      key: "Phone",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Counter",
-      dataIndex: "CounterId",
-      key: "CounterId",
-      render: (CounterId) => (CounterId ? `${CounterId}` : "No Counter"),
+      dataIndex: "counterName",
+      key: "CounterName",
+      render: (counterName) => (counterName ? `${counterName}` : "No Counter"),
     },
     {
-      title: <div style={{ textAlign: "center" }}>Gender</div>,
-      dataIndex: "Gender",
-      key: "Gender",
-      render: (Gender) =>
-        Gender === 0 ? (
-          <div style={{ textAlign: "center" }}>
-            <i className="ri-user-fill" style={{ color: "#4f6c95" }}>
-              <RiUserFill />
-            </i>
-          </div>
+      title: "Gender",
+      dataIndex: "employeeGender",
+      align: "center",
+      key: "gender",
+      render: (employeeGender) =>
+        employeeGender === 0 ? (
+          <i className="ri-user-fill" style={{ color: "#4f6c95" }}>
+            <RiUserFill />
+          </i>
         ) : (
-          <div style={{ textAlign: "center" }}>
-            <i className="ri-user-fill" style={{ color: "#cc5e58" }}>
-              <RiUserFill />
-            </i>
-          </div>
+          <i className="ri-user-fill" style={{ color: "#cc5e58" }}>
+            <RiUserFill />
+          </i>
         ),
     },
     {
-      title: <div style={{ textAlign: "center" }}>Role</div>,
-      dataIndex: "RoleId",
-      key: "RoleId",
-      render: (RoleId) => (
-        <div style={{ textAlign: "center" }}>
-          <Tag
-            color={
-              RoleId === 1
-                ? "green"
-                : RoleId === 2
-                ? "gold"
-                : RoleId === 3
-                ? "geekblue"
-                : "warning"
-            }
-          >
-            {RoleId === 1
-              ? "Admin"
-              : RoleId === 2
-              ? "Manager"
-              : RoleId === 3
-              ? "Staff"
-              : "NaN"}
-          </Tag>
-        </div>
+      title: "Role",
+      dataIndex: "roleId",
+      align: "center",
+      key: "roleId",
+      render: (roleId) => (
+        <Tag
+          color={
+            roleId === 1
+              ? "green"
+              : roleId === 2
+              ? "gold"
+              : roleId === 3
+              ? "geekblue"
+              : roleId === 4
+              ? "cyan"
+              : "warning"
+          }
+        >
+          {roleId === 1
+            ? "Super Admin"
+            : roleId === 2
+            ? "Admin"
+            : roleId === 3
+            ? "Manager"
+            : roleId === 4
+            ? "Staff"
+            : "NaN"}
+        </Tag>
       ),
     },
     {
-      title: <div style={{ textAlign: "center" }}>Status</div>,
+      title: "Status",
+      align: "center",
       key: "Status",
-      dataIndex: "Status",
-      render: (Status) => (
-        <div style={{ textAlign: "center" }}>
-          <Tag
-            color={
-              Status === 0
-                ? "green-inverse"
-                : Status === 1
-                ? "orange-inverse"
-                : Status === 2
-                ? "#333333"
-                : Status === 3
-                ? "volcano-inverse"
-                : "#000000"
-            }
-          >
-            {Status === 0
-              ? "Active"
-              : Status === 1
-              ? "Inactive"
-              : Status === 2
-              ? "Unassign"
-              : Status === 3
-              ? "Deleted"
-              : "NaN"}
-          </Tag>
-        </div>
+      dataIndex: "employeeStatus",
+      render: (employeeStatus) => (
+        <Tag
+          color={
+            employeeStatus === 0
+              ? "green-inverse"
+              : employeeStatus === 1
+              ? "orange-inverse"
+              : employeeStatus === 2
+              ? "#333333"
+              : employeeStatus === 3
+              ? "volcano-inverse"
+              : "#000000"
+          }
+        >
+          {employeeStatus === 0
+            ? "Active"
+            : employeeStatus === 1
+            ? "Inactive"
+            : employeeStatus === 2
+            ? "Unassign"
+            : employeeStatus === 3
+            ? "Deleted"
+            : "NaN"}
+        </Tag>
       ),
     },
     {

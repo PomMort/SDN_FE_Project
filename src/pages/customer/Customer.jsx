@@ -34,11 +34,13 @@ export default function Customer() {
     setSearchQuery(e.target.value);
   };
 
-  const filteredCustomer = customerData?.filter(
-    (customer) =>
-      customer.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.Phone.includes(searchQuery)
-  );
+  const filteredCustomer = customerData
+    ?.filter(
+      (customer) =>
+        customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.phone.includes(searchQuery)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleCreate = async (values) => {
     setLoading(true);
@@ -53,6 +55,7 @@ export default function Customer() {
   };
 
   const handleUpdate = async (values) => {
+    console.log(values);
     setLoading(true);
     try {
       await updateCustomer(values).unwrap();
@@ -104,6 +107,7 @@ export default function Customer() {
         onCreate={handleCreate}
         onCancel={() => setIsCreateModalVisible(false)}
         loading={loading}
+        customerData={customerData}
       />
       <UpdateCustomerModel
         visible={isUpdateModalVisible}
@@ -111,6 +115,7 @@ export default function Customer() {
         onCancel={() => setIsUpdateModalVisible(false)}
         loading={loading}
         customer={selectedCustomer}
+        customerData={customerData}
       />
     </div>
   );

@@ -1,35 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./Order.css";
 import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ButtonCreateProduct from "../../components/ButtonFilter/ButtonCreate";
 import OrderList from "./OrderManage/OrderList";
+import OrderModal from "./OrderManage/OrderModal";
+import { useGetAllOrdersQuery } from "../../services/orderAPI";
 
 export default function Order() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  // const { data: customerData, refetch, isFetching } = useGetAllCustomersQuery();
-
-  // useEffect(() => {
-  //   if (!isFetching && customerData) {
-  //     setLoading(false);
-  //   } else {
-  //     setLoading(true);
-  //   }
-  // }, [isFetching, customerData]);
+  const {
+    data: orderData,
+    error: orderError,
+    isLoading: isOrderLoading,
+  } = useGetAllOrdersQuery();
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // const filteredCustomer = customerData?.filter(
-  //   (customer) =>
-  //     customer.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     customer.Phone.includes(searchQuery)
-  // );
+  const handleMakeOrderClick = () => {
+    setIsCreateModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsCreateModalVisible(false);
+  };
+
+  const filteredOrderData = useMemo(() => {
+    if (!orderData) return [];
+    return orderData.filter((order) =>
+      order.OrderId.toString().includes(searchQuery)
+    );
+  }, [orderData, searchQuery]);
 
   return (
     <div className="order-manage-page">
@@ -41,21 +45,22 @@ export default function Order() {
           <Input
             style={{ borderRadius: 20, width: "350px" }}
             size="large"
-            placeholder="Search by name or phone number"
+            placeholder="Search by Order ID"
             prefix={<SearchOutlined />}
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </div>
         <div className="action-right">
-          <div onClick={() => setIsCreateModalVisible(true)}>
+          <div onClick={handleMakeOrderClick}>
             <ButtonCreateProduct contentBtn={"Make Order"} />
           </div>
         </div>
       </div>
       <div className="Customer-list">
-        <OrderList loading={loading} />
+        <OrderList orderData={filteredOrderData} loading={isOrderLoading} />
       </div>
+      <OrderModal visible={isCreateModalVisible} onCancel={handleCancel} />
     </div>
   );
 }

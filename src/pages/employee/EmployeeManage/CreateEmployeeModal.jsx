@@ -4,7 +4,13 @@ import "../Employee.css";
 
 const { Option } = Select;
 
-const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
+const CreateEmployeeModal = ({
+  visible,
+  onCreate,
+  onCancel,
+  loading,
+  employeesData,
+}) => {
   const [form] = Form.useForm();
   const [userType, setUserType] = useState(null);
 
@@ -19,11 +25,45 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
     // console.log("Selected DOB:", date);
   };
 
-  const handleUserTypeChange = (value) => {
-    setUserType(value);
-    if (value === 1 || value === 2) {
-      form.setFieldsValue({ counter: null });
+  // const handleUserTypeChange = (value) => {
+  //   setUserType(value);
+  //   if (value === 1 || value === 2 || value === 3) {
+  //     form.setFieldsValue({ counter: null });
+  //   }
+  // };
+
+  const checkEmailExists = (_, email) => {
+    if (!email) {
+      return Promise.reject("Please input the email of the user!");
     }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return Promise.reject("Please input a valid email address!");
+    }
+    const emailExists = employeesData.some(
+      (employee) => employee.email === email
+    );
+    if (emailExists) {
+      return Promise.reject("This email is already in use!");
+    }
+    return Promise.resolve();
+  };
+
+  const checkPhoneExists = (_, phone) => {
+    if (!phone) {
+      return Promise.reject("Please input the phone number of the user!");
+    }
+    const phonePattern = /^[0-9]{10}$/;
+    if (!phonePattern.test(phone)) {
+      return Promise.reject("Please input a valid 10-digit phone number!");
+    }
+    const phoneExists = employeesData.some(
+      (employee) => employee.phone === phone
+    );
+    if (phoneExists) {
+      return Promise.reject("This phone number is already in use!");
+    }
+    return Promise.resolve();
   };
 
   return (
@@ -73,6 +113,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                 <Input placeholder="Input the full name..." />
               </Form.Item>
             </Col>
+
             <Col span={8}>
               <p>Email:</p>
             </Col>
@@ -85,8 +126,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                     message: "Please input the email of the user!",
                   },
                   {
-                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Please input a valid email address!",
+                    validator: checkEmailExists,
                   },
                 ]}
               >
@@ -105,8 +145,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                     message: "Please input the phone number of the user!",
                   },
                   {
-                    pattern: /^[0-9]{10}$/,
-                    message: "Please input a valid 10-digit phone number!",
+                    validator: checkPhoneExists,
                   },
                 ]}
               >
@@ -130,7 +169,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                 </Radio.Group>
               </Form.Item>
             </Col>
-            <Col span={8}>DoB:</Col>
+            {/* <Col span={8}>DoB:</Col>
             <Col span={16}>
               <Form.Item
                 name="dob"
@@ -148,7 +187,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                   onChange={handleDateChange}
                 />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col span={8}>User Type:</Col>
             <Col span={16}>
               <Form.Item
@@ -162,7 +201,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
               >
                 <Select
                   placeholder="Select user type: "
-                  onChange={handleUserTypeChange}
+                  // onChange={handleUserTypeChange}
                 >
                   {RoleOption.map((option) => (
                     <Option key={option.value} value={option.value}>
@@ -172,7 +211,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                 </Select>
               </Form.Item>
             </Col>
-            {userType !== 1 && userType !== 2 && (
+            {/* {userType !== 1 && userType !== 2 && userType !== 3 && (
               <>
                 <Col span={8}>
                   <p>Counter:</p>
@@ -197,7 +236,7 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
                   </Form.Item>
                 </Col>
               </>
-            )}
+            )} */}
           </Row>
         </Form>
       </Modal>
@@ -206,9 +245,10 @@ const CreateEmployeeModal = ({ visible, onCreate, onCancel, loading }) => {
 };
 
 const RoleOption = [
-  { value: 1, label: "Admin" },
-  { value: 2, label: "Manager" },
-  { value: 3, label: "Staff" },
+  // { value: 1, label: "Super Admin" },
+  { value: 2, label: "Admin" },
+  { value: 3, label: "Manager" },
+  { value: 4, label: "Staff" },
 ];
 const CounterOption = [
   { value: 1, label: "Counter 1" },

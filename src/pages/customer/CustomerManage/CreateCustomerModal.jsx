@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import { Modal, Form, Input, Select, Row, Col, Radio } from "antd";
 import "../Customer.css";
 
-const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
+const CreateCustomerModal = ({
+  visible,
+  onCreate,
+  onCancel,
+  loading,
+  customerData,
+}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -10,6 +16,40 @@ const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
       form.resetFields();
     }
   }, [form, visible]);
+
+  const checkEmailExists = (_, email) => {
+    if (!email) {
+      return Promise.reject("Please input the email of the user!");
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return Promise.reject("Please input a valid email address!");
+    }
+    const emailExists = customerData.some(
+      (customer) => customer.email === email
+    );
+    if (emailExists) {
+      return Promise.reject("This email is already in use!");
+    }
+    return Promise.resolve();
+  };
+
+  const checkPhoneExists = (_, phone) => {
+    if (!phone) {
+      return Promise.reject("Please input the phone number of the user!");
+    }
+    const phonePattern = /^[0-9]{10}$/;
+    if (!phonePattern.test(phone)) {
+      return Promise.reject("Please input a valid 10-digit phone number!");
+    }
+    const phoneExists = customerData.some(
+      (customer) => customer.phone === phone
+    );
+    if (phoneExists) {
+      return Promise.reject("This phone number is already in use!");
+    }
+    return Promise.resolve();
+  };
 
   return (
     <div className="create-customer-page">
@@ -45,7 +85,7 @@ const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
             </Col>
             <Col span={16}>
               <Form.Item
-                name="Name"
+                name="name"
                 rules={[
                   {
                     required: true,
@@ -57,11 +97,30 @@ const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
               </Form.Item>
             </Col>
             <Col span={8}>
+              <p>Email:</p>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the email of the customer!",
+                  },
+                  {
+                    validator: checkEmailExists,
+                  },
+                ]}
+              >
+                <Input placeholder="Input the email..." />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
               <p>Address:</p>
             </Col>
             <Col span={16}>
               <Form.Item
-                name="Address"
+                name="address"
                 rules={[
                   {
                     required: true,
@@ -77,15 +136,14 @@ const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
             </Col>
             <Col span={16}>
               <Form.Item
-                name="Phone"
+                name="phone"
                 rules={[
                   {
                     required: true,
                     message: "Please input the phone number of the customer!",
                   },
                   {
-                    pattern: /^[0-9]{10}$/,
-                    message: "Please input a valid 10-digit phone number!",
+                    validator: checkPhoneExists,
                   },
                 ]}
               >
@@ -95,7 +153,7 @@ const CreateCustomerModal = ({ visible, onCreate, onCancel, loading }) => {
             <Col span={8}>Gender</Col>
             <Col span={16}>
               <Form.Item
-                name="Gender"
+                name="customerGender"
                 rules={[
                   {
                     required: true,

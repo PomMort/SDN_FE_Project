@@ -1,16 +1,20 @@
-import { Space, Table, Tag, Button, Popover, ConfigProvider } from 'antd'
-import React from 'react'
+import {  Table, Button, Popover, ConfigProvider } from 'antd';
+import React from 'react';
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useState } from "react";
-import { LoginSharp } from "@mui/icons-material";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 // import '../product/ProductManagement/ProductList.css'
+import { Link } from 'react-router-dom';
+import UpdateProductModal from './UpdateProductModal';
 
-export default function ProductList() {
+export default function ProductList({ productData = [], handldeDeleteProduct, handleEditProduct, }) { // Destructure props and set default value
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [productSelected, setProductSelected] = useState(null);
 
     const handlePopoverVisibleChange = (index, visible) => {
-        setOpen({ ...open, [index]: visible }); // Cập nhật trạng thái của Popover
+        setOpen({ ...open, [index]: visible }); // Update Popover state
     }
-    // console.log(products)
+
 
 
     const columns = [
@@ -64,16 +68,39 @@ export default function ProductList() {
                     <Popover
                         content={
                             <div className="pop-up" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                <Button type="text"><p className="">View Detail</p></Button>
-                                <Button type="text"><p className="">Delete</p></Button>
-                                <Button type="text"><p className="">Update</p></Button>
+                                <Link to=
+                                    {{
+                                        pathname: `/view-product-detail/${record?.id}`
+                                    }}
+                                >
+                                    <div>
+                                        <EyeOutlined style={{ paddingRight: '8px' }} />
+                                        <Button type="text" >
+                                            <p className="">View Product Detail</p></Button>
+                                    </div>
 
+                                </Link>
+                                <div>
+                                    <DeleteOutlined style={{ paddingRight: '8px' }} />
+                                    <Button type="text" onClick={() => handldeDeleteProduct(record?.id)}>
+                                        <p className="">Delete Product</p></Button>
+                                </div>
+
+                                <div>
+                                    <EditOutlined style={{ paddingRight: '8px' }} />
+                                    <Button type="text" onClick={() => {
+                                        setIsModalOpen(true);
+                                        handlePopoverVisibleChange(index, false);
+                                        setProductSelected(record.id);
+                                    }}>
+                                        <p className="">Edit Product</p></Button>
+                                </div>
                             </div>
                         }
                         trigger="click"
                         open={open[index]}
                         placement="bottomRight"
-                        onOpenChange={(visible) => handlePopoverVisibleChange(index, visible)} // Xử lý sự kiện khi Popover thay đổi trạng thái
+                        onOpenChange={(visible) => handlePopoverVisibleChange(index, visible)} // Handle Popover state change
                     >
                         <Button type="text"><TfiMoreAlt /></Button>
 
@@ -83,44 +110,24 @@ export default function ProductList() {
             ),
         },
     ];
-    const data = [
-        {
-            key: '1',
-            name: 'John Brown',
-            code: 123456,
-            category: 'Dimond',
-            weight: '1.1Carat',
-            price: '1000VND',
-            counter: 'counter 1'
-        },
-        {
-            key: '2',
-            name: 'John Brown',
-            code: 123456,
-            category: 'Dimond',
-            weight: '1.1Carat',
-            price: '1000VND',
-            counter: 'counter 1'
-        }, {
-            key: '3',
-            name: 'John Brown',
-            code: 123456,
-            category: 'Dimond',
-            weight: '1.1Carat',
-            price: '1000VND',
-            counter: 'counter 1'
-        }, {
-            key: '4',
-            name: 'John Brown',
-            code: 123456,
-            category: 'Dimond',
-            weight: '1.1Carat',
-            price: '1000VND',
-            counter: 'counter 1'
-        },
-    ];
-    const [open, setOpen] = useState(Array(data.length).fill(false));
+
+    // Ensure productData is an array
+    const data = productData.map((item, index) => ({
+        key: index + 1,
+        id: item?.id,
+        name: item?.Name,
+        code: item?.Barcode,
+        category: item?.Category,
+        weight: item?.Weight,
+        price: item?.Price,
+        counter: item?.CounterId,
+    }));
+    const [open, setOpen] = useState(Array(productData.length).fill(false));
+
     return (
-        <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+        <>
+            <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+            <UpdateProductModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} productSelected={productSelected} setProductSelected={setProductSelected} handleEditProduct={handleEditProduct} />
+        </>
     )
 }

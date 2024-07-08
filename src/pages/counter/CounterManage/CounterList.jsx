@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Menu, Space, Table } from "antd";
+import { Dropdown, Menu, Space, Table, Tag } from "antd";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { RiUserFill } from "@remixicon/react";
 
@@ -38,13 +38,24 @@ export default function CustomerList({ counterData, loading, handleEdit }) {
     },
     {
       title: "Counter Name",
-      dataIndex: "CounterName",
+      dataIndex: "counterName",
       key: "counterName",
     },
     {
       title: "Location",
-      dataIndex: "Location",
+      dataIndex: "location",
       key: "location",
+    },
+    {
+      title: "Status",
+      align: "center",
+      key: "isActive",
+      dataIndex: "isActive",
+      render: (isActive) => (
+        <Tag color={isActive == true ? "green-inverse" : "volcano-inverse"}>
+          {isActive == true ? "Active" : "Inactive"}
+        </Tag>
+      ),
     },
     {
       width: 55,

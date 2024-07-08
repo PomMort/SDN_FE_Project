@@ -4,57 +4,64 @@ import React, { useEffect, useState } from "react"; // Import React if not alrea
 import "./Login.css";
 import { Alert, Button, Form, Input, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useLoginUserMutation } from "../../services/authAPI";
-import { selectToken, setAuth, setToken } from "../../slices/auth.slice";
+import { useDispatch } from "react-redux";
+import {
+  setAuth,
+  setExpired,
+  setRefreshToken,
+  setToken,
+} from "../../slices/auth.slice";
+import { useLoginMutation } from "../../services/authAPI";
+import { jwtDecode } from "jwt-decode"; // import dependency
 
 function Login() {
   const [form] = Form.useForm(); // Sử dụng hook Form của Ant Design
   const [error, setError] = useState(null); // Khai báo state error
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector(selectToken);
 
-  const [loginUser, { isLoading }] = useLoginUserMutation();
-
-  //////////////////////////////////////// Dieu kien chuyen trang
-  // useEffect(() => {
-  // if (token) {
-  // navigate("/");
-  // }
-  // }, [token, navigate]);
+  const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (values) => {
     try {
-      const result = await loginUser({
+      const result = await login({
         email: values.email,
         password: values.password,
       });
+      console.log(result);
 
-      if (result.data && result.data.token) {
-        dispatch(setAuth(result.data));
-        dispatch(setToken(result.data.token));
-        // localStorage.setItem("token", result.data.token);
-        console.log(result.data.first_login);
-        if (result.data.first_login == true) {
-          navigate("/login-first-time");
-        } else {
-          navigate("/");
-        }
+      if (result.data) {
+        const token = result.data.accessTokenToken;
+        const refreshToken = result.data.refreshToken;
+        const auth = jwtDecode(token); // decode your token here
+        // const firstLogin = auth.IsLogin;
+
+        // console.log(firstLogin);
+        // if (firstLogin === "False") {
+        //   console.log("Chuaw doi mat khau");
+        //   navigate("/login-first-time");
+        // }
+        dispatch(setAuth(auth));
+        dispatch(setToken(token));
+        dispatch(setExpired(auth.exp));
+        dispatch(setRefreshToken(refreshToken));
 
         notification.success({
           message: "Login successfully",
-          description: "Welcome to FAMS !",
+          description: "Welcome to Luminary !",
         });
-      } else {
+      } else if (result.error) {
         notification.error({
-          message: "Login error",
-          description: "Invalid email or password. Try again!",
+          message: "Login Unsuccessfully",
+          description: "Invalid email or password!",
         });
-        form.resetFields(); // Xóa dữ liệu trong các ô input
       }
     } catch (error) {
-      setError("An error occurred while attempting to log in");
+      // setError("An error occurred while attempting to log in");
+      notification.error({
+        message: "Login Unsuccessfully",
+        description: "An error occurred while attempting to log in!",
+      });
     }
   };
 

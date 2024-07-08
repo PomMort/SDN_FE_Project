@@ -10,12 +10,16 @@ import productReducer from "../slices/product.slice";
 import orderReducer from "../slices/order.slice";
 import customerReducer from "../slices/customer.slice";
 import counterReducer from "../slices/counter.slice";
+import categoryReducer from "../slices/category.slice";
+import promotionReducer from "../slices/promotion.slice";
 import { employeeAPI } from "../services/employeeAPI";
 import { orderAPI } from "../services/orderAPI";
 import { authApi } from "../services/authAPI";
 import { productAPI } from "../services/productAPI";
 import { customerAPI } from "../services/customerAPI";
 import { counterAPI } from "../services/counterAPI";
+import { categoryAPI } from "../services/categoryAPI";
+import { promotionAPI } from "../services/promotionAPI";
 
 const persistConfig = {
   key: "root",
@@ -26,43 +30,43 @@ const staticReducers = {
   theme: "theme",
 };
 
-// const persistedReducer = persistReducer(persistConfig, flowerReducer);
 const persistedAuthReducer = persistReducer(persistConfig, authReducer); //user them API test
 // const persistedUserReducer = persistReducer(persistConfig, userReducer);
 
 export const store = configureStore({
   reducer: {
-    // [flowerApi.reducerPath]: flowerApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     [employeeAPI.reducerPath]: employeeAPI.reducer,
     [productAPI.reducerPath]: productAPI.reducer,
     [orderAPI.reducerPath]: orderAPI.reducer,
     [customerAPI.reducerPath]: customerAPI.reducer,
     [counterAPI.reducerPath]: counterAPI.reducer,
+    [categoryAPI.reducerPath]: categoryAPI.reducer,
+    [promotionAPI.reducerPath]: promotionAPI.reducer,
 
-    // flower: persistedReducer,
     auth: persistedAuthReducer,
     employee: employeeReducer,
     product: productReducer,
     order: orderReducer,
     customer: customerReducer,
     counter: counterReducer,
+    category: categoryReducer,
+    promotion: promotionReducer,
     // product: productReducer,
     // counter: counterReducer,
   },
-  // middleware: (getDefaultMiddleware) =>
-  //   getDefaultMiddleware().concat(flowerApi.middleware),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
     }).concat(
-      // flowerApi.middleware,
       authApi.middleware,
       employeeAPI.middleware,
       productAPI.middleware,
       orderAPI.middleware,
       customerAPI.middleware,
-      counterAPI.middleware
+      counterAPI.middleware,
+      categoryAPI.middleware,
+      promotionAPI.middleware
       // productAPI.middleware,
       // counterAPI.middleware
     ), //user them API test

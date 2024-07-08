@@ -1,5 +1,8 @@
-.pop-up{
+/* .pop-up{
    display: flex;
    flex-direction: column;
    gap: 10px;
-}
+} */
+ .Button_viewDetail{
+   display: flex;
+ }

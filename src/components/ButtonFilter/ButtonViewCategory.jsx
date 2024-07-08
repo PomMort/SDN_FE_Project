@@ -1,6 +1,7 @@
-import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
+import { EyeOutlined  } from "@ant-design/icons";
 import { Button, ConfigProvider } from "antd";
 import React from "react";
+
 
 export default function ButtonViewCategory({
   contentBtn,
@@ -11,7 +12,9 @@ export default function ButtonViewCategory({
   onChange,
   ...rest
 }) {
+
   return (
+
     <ConfigProvider
       theme={{
         components: {
@@ -29,6 +32,8 @@ export default function ButtonViewCategory({
       <Button
         // style={{ fontFamily: "Inter" }}
         type="primary"
+        onClick={onClick}
+        icon={<EyeOutlined />}
       >
         {contentBtn}
       </Button>

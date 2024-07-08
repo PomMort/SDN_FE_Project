@@ -5,11 +5,11 @@ export const authApi = createApi({
   reducerPath: "authManagement",
   baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   endpoints: (builder) => ({
-    loginUser: builder.mutation({
+    login: builder.mutation({
       query: ({ email, password }) => ({
-        url: `users/login`,
+        url: `Authorize/Login?email=${email}&password=${password}`,
         method: "POST",
-        body: { email, password },
+        // body: { email, password },
       }),
     }),
     updatePassword: builder.mutation({
@@ -46,21 +46,24 @@ export const authApi = createApi({
     //     };
     //   },
     // }),
-    // refreshToken: builder.mutation({
-    //   query: ({ refreshToken }) => ({
-    //     url: `users/refresh-token`,
-    //     method: "POST",
-    //     body: { refreshToken: refreshToken }, // pass the refresh token in the body
-    //   }),
-    // }),
+    refreshToken: builder.mutation({
+      query: ({ refreshToken, accessTokenToken }) => ({
+        url: `/Authorize/RefreshAccessToken`,
+        method: "POST",
+        body: {
+          refreshToken: refreshToken,
+          accessTokenToken: accessTokenToken,
+        }, // pass the refresh token in the body
+      }),
+    }),
   }),
 });
 
 export const {
-  useLoginUserMutation,
+  useLoginMutation,
   useUpdatePasswordMutation,
   //   useChangePasswordByEmailMutation,
   //   useVerifyMailMutation,
   //   useVerifyOtpMutation,
-  //   useRefreshTokenMutation,
+  useRefreshTokenMutation,
 } = authApi;

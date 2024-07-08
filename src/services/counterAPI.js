@@ -1,14 +1,25 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CUSTOMER_API } from "../config";
+import { API_URL } from "../config";
+import { selectToken } from "../slices/auth.slice";
 
 // Define a service using a base URL and expected endpoints
 export const counterAPI = createApi({
   reducerPath: "counterManagement",
   tagTypes: ["CounterList"],
-  baseQuery: fetchBaseQuery({ baseUrl: CUSTOMER_API }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
+      if (token) {
+        headers.append("Authorization", `Bearer ${token}`);
+      }
+      headers.append("Content-Type", "application/json");
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
     getAllCounters: builder.query({
-      query: () => `counters`,
+      query: () => `/Counter/GetAllCounters`,
       providesTags: (result, _error, _arg) =>
         result
           ? [
@@ -17,7 +28,15 @@ export const counterAPI = createApi({
             ]
           : [{ type: "CounterList", id: "LIST" }],
     }),
+    createCounter: builder.mutation({
+      query: (newCounter) => ({
+        url: `/Counter/AddNewCounter`,
+        method: "POST",
+        body: newCounter,
+      }),
+      invalidatesTags: [{ type: "CounterList", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetAllCountersQuery } = counterAPI;
+export const { useGetAllCountersQuery, useCreateCounterMutation } = counterAPI;

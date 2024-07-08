@@ -1,0 +1,20 @@
+.buy-back-page {
+  padding: 10px 20px;
+}
+.buy-back-page .header {
+  /* padding: 10px 20px; */
+  margin-bottom: 15px;
+}
+.buy-back-page .body {
+}
+.buy-back-page .body .information {
+}
+.buy-back-page .body .information .description {
+  padding: 2px 20px;
+}
+.buy-back-page .body .product-information {
+  padding: 2px 20px;
+}
+.buy-back-page .body .cart-information {
+  padding: 2px 20px;
+}

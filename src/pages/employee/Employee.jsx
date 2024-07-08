@@ -50,17 +50,23 @@ export default function Employee() {
 
   const filteredEmployees = employeesData?.filter(
     (employee) =>
-      employee.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.Phone.includes(searchQuery)
+      employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.phone.includes(searchQuery)
   );
 
   const handleCreateEmployee = async (values) => {
-    console.log(values);
+    // console.log(values);
     try {
-      await addEmployee(values).unwrap();
-      message.success("Employee created successfully");
-      setIsCreateModalVisible(false);
-      refetch();
+      const response = await addEmployee(values);
+
+      console.log(response);
+      if (response.error.originalStatus === 200) {
+        message.success("Employee created successfully");
+        setIsCreateModalVisible(false);
+        refetch();
+      } else {
+        message.error("Employee created unsuccessfully");
+      }
     } catch (error) {
       message.error("Failed to create employee");
     }
@@ -160,6 +166,7 @@ export default function Employee() {
         onCreate={handleCreateEmployee}
         onCancel={() => setIsCreateModalVisible(false)}
         loading={isLoadingAdd}
+        employeesData={employeesData}
       />
       <UpdateEmployeeModal
         visible={isUpdateModalVisible}
