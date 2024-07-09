@@ -2,8 +2,27 @@ import { Dropdown, Menu, Popconfirm, Space, Table } from "antd";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import React from "react";
 import { RiUserFill } from "@remixicon/react";
+import { useDeleteCustomerMutation } from "../../../services/customerAPI";
+import { notification } from "antd";
 
-export default function CustomerList({ customerData, loading, handleEdit }) {
+export default function CustomerList({ customerData, loading, handleEdit, refetch }) {
+  const [deleteCustomer] = useDeleteCustomerMutation();
+
+  const handleRemoveCustomer = async (customerId) => {
+    try {
+      await deleteCustomer(customerId).unwrap();
+      notification.success({
+        message: "Customer removed successfully!",
+      });
+      refetch();
+    } catch (error) {
+      notification.error({
+        message: "Failed to remove customer",
+        description: error.message,
+      });
+    }
+  };
+
   const processedData = customerData?.map((customer, index) => ({
     ...customer,
     no: index + 1,
@@ -30,7 +49,7 @@ export default function CustomerList({ customerData, loading, handleEdit }) {
       <Menu.Item key="remove">
         <Popconfirm
           title="Are you sure you want to remove this user?"
-          // onConfirm={() => handleRemoveEmployee(record.EmployeeId)}
+          onConfirm={() => handleRemoveCustomer(record.id)}
           okText="Yes"
           cancelText="No"
         >
@@ -112,6 +131,7 @@ export default function CustomerList({ customerData, loading, handleEdit }) {
       ),
     },
   ];
+
   return (
     <div>
       <Table
