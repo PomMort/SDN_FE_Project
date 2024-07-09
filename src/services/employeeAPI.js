@@ -18,7 +18,7 @@ export const employeeAPI = createApi({
   }),
   endpoints: (builder) => ({
     getAllEmployee: builder.query({
-      query: () => `Employee/GetAllEmployee`,
+      query: () => `employees`,
       providesTags: (result) =>
         result
           ? result.map(({ id }) => ({ type: "employeeList", id }))

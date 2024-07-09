@@ -9,11 +9,7 @@ const GuestGuard = ({ children }) => {
   const navigate = useNavigate();
 
   if (token) {
-    if (auth.IsLogin === "False") {
-      navigate("/login-first-time");
-    } else {
-      return <Navigate to="/" replace />;
-    }
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

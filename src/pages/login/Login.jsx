@@ -5,12 +5,7 @@ import "./Login.css";
 import { Alert, Button, Form, Input, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  setAuth,
-  setExpired,
-  setRefreshToken,
-  setToken,
-} from "../../slices/auth.slice";
+import { setAuth, setToken } from "../../slices/auth.slice";
 import { useLoginMutation } from "../../services/authAPI";
 import { jwtDecode } from "jwt-decode"; // import dependency
 
@@ -23,44 +18,29 @@ function Login() {
   const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (values) => {
-    try {
-      const result = await login({
-        email: values.email,
-        password: values.password,
+    const result = await login({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (result.data.data !== null) {
+      const data = result.data.data;
+      const token = data.token;
+      const auth = jwtDecode(data.token); // decode your token here
+
+      // console.log(auth);
+
+      dispatch(setAuth(auth));
+      dispatch(setToken(token));
+
+      notification.success({
+        message: "Login successfully",
+        description: "Welcome to Luminary !",
       });
-      console.log(result);
-
-      if (result.data) {
-        const token = result.data.accessTokenToken;
-        const refreshToken = result.data.refreshToken;
-        const auth = jwtDecode(token); // decode your token here
-        // const firstLogin = auth.IsLogin;
-
-        // console.log(firstLogin);
-        // if (firstLogin === "False") {
-        //   console.log("Chuaw doi mat khau");
-        //   navigate("/login-first-time");
-        // }
-        dispatch(setAuth(auth));
-        dispatch(setToken(token));
-        dispatch(setExpired(auth.exp));
-        dispatch(setRefreshToken(refreshToken));
-
-        notification.success({
-          message: "Login successfully",
-          description: "Welcome to Luminary !",
-        });
-      } else if (result.error) {
-        notification.error({
-          message: "Login Unsuccessfully",
-          description: "Invalid email or password!",
-        });
-      }
-    } catch (error) {
-      // setError("An error occurred while attempting to log in");
+    } else if (result.error) {
       notification.error({
         message: "Login Unsuccessfully",
-        description: "An error occurred while attempting to log in!",
+        description: "Invalid email or password!",
       });
     }
   };
@@ -108,11 +88,11 @@ function Login() {
               className="form-input"
             />
           </Form.Item>
-          <div className="forget-pass ">
+          {/* <div className="forget-pass ">
             <p>
               <Link to={"/forget-password"}>Forget Password</Link>
             </p>
-          </div>
+          </div> */}
           <Form.Item>
             <Button
               type="primary"

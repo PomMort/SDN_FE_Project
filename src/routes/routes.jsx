@@ -6,20 +6,6 @@ import GuestGuard from "./GuestGuard";
 import AuthGuard from "./AuthGuard";
 
 const Login = Loadable({ loader: () => import("../pages/login/Login") });
-const ForgetPassword = Loadable({
-  loader: () => import("../pages/login/ForgetPassword"),
-});
-const LoginFirstTime = Loadable({
-  loader: () => import("../pages/login/LoginFirstTime"),
-});
-
-const Counter = Loadable({
-  loader: () => import("../pages/counter/Counter"),
-});
-
-const CustomerPolicy = Loadable({
-  loader: () => import("../pages/customerPolicy/CustomerPolicy"),
-});
 
 const Customer = Loadable({
   loader: () => import("../pages/customer/Customer"),
@@ -37,9 +23,7 @@ const EmployeeDetail = Loadable({
   loader: () => import("../pages/employee/EmployeeDetail/EmployeeDetail"),
 });
 const Home = Loadable({ loader: () => import("../pages/home/Home") });
-const Dashboard = Loadable({
-  loader: () => import("../pages/dashboard/Dashboard"),
-});
+
 const Category = Loadable({
   loader: () => import("../pages/category/Category"),
 });
@@ -49,12 +33,7 @@ const OrderDetail = Loadable({
 const Sell = Loadable({
   loader: () => import("../pages/order/Sell/Sell"),
 });
-const Buy = Loadable({
-  loader: () => import("../pages/order/Buy/Buy"),
-});
-const CheckoutBuyBack = Loadable({
-  loader: () => import("../pages/order/Buy/CheckoutBuy"),
-});
+
 const ViewProductDetail = Loadable({
   loader: () => import("../pages/product/ProductManagement/ViewProductDetail"),
 });
@@ -69,10 +48,6 @@ export const router = createBrowserRouter([
         path: "login",
         element: Login,
       },
-      {
-        path: "forget-password",
-        element: ForgetPassword,
-      },
     ],
   },
   {
@@ -81,10 +56,6 @@ export const router = createBrowserRouter([
 
     children: [
       {
-        path: "login-first-time",
-        element: LoginFirstTime,
-      },
-      {
         element: <MainLayout />,
         children: [
           {
@@ -92,19 +63,7 @@ export const router = createBrowserRouter([
             // path: "",
             element: Home,
           },
-          {
-            path: "dashboard",
-            element: Dashboard,
-          },
 
-          {
-            path: "counter",
-            element: Counter,
-          },
-          {
-            path: "customer-policy",
-            element: CustomerPolicy,
-          },
           {
             path: "customer",
             element: Customer,
@@ -144,14 +103,6 @@ export const router = createBrowserRouter([
           {
             path: "order/sell",
             element: Sell,
-          },
-          {
-            path: "order/buy",
-            element: Buy,
-          },
-          {
-            path: "order/buy/checkout",
-            element: CheckoutBuyBack,
           },
         ],
       },

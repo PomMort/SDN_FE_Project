@@ -12,8 +12,8 @@ const Home = () => {
   return (
     <div style={{ width: "100%", padding: "20px" }}>
       <Card>
-        <Title level={2}>Welcome, {auth?.EmployeeName}</Title>
-        <Text>Email: {auth?.Email}</Text>
+        <Title level={2}>Welcome, {auth?.name}</Title>
+        <Text>Email: {auth?.email}</Text>
         {/* Add more user information here based on your auth slice */}
       </Card>
 

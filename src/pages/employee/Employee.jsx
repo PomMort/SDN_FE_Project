@@ -48,7 +48,7 @@ export default function Employee() {
     setSearchQuery(e.target.value);
   };
 
-  const filteredEmployees = employeesData?.filter(
+  const filteredEmployees = employeesData?.data.filter(
     (employee) =>
       employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.phone.includes(searchQuery)

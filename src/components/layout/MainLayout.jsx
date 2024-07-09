@@ -38,7 +38,7 @@ const MainLayout = () => {
                 components: {
                   Menu: {
                     iconSize: "20px",
-                    itemHeight: "45px",
+                    itemHeight: "55px",
                     itemSelectedColor: "#ffffff",
                     itemSelectedBg: "#333333",
                     collapsedIconSize: "20px",
