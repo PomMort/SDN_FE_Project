@@ -1,14 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../config";
-import { selectToken } from "../slices/auth.slice";
-
+const token = localStorage.getItem("token");
 export const employeeAPI = createApi({
   reducerPath: "EmployeeManagement",
   tagTypes: ["EmployeeList"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
-      const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {
         headers.append("Authorization", `Bearer ${token}`);
       }
@@ -21,7 +19,7 @@ export const employeeAPI = createApi({
       query: () => `employees`,
       providesTags: (result) =>
         result
-          ? result.map(({ id }) => ({ type: "employeeList", id }))
+          ? result.data.map(({ id }) => ({ type: "employeeList", id }))
           : [{ type: "employeeList", id: " LIST " }],
     }),
 
@@ -32,25 +30,16 @@ export const employeeAPI = createApi({
 
     addEmployee: builder.mutation({
       query: (employee) => ({
-        url: "/Employee/AddNewEmployee",
+        url: "employees/create",
         method: "POST",
-        body: {
-          name: employee.name,
-          email: employee.email,
-          phone: employee.phone,
-          roleId: employee.role,
-          // counterId: employee.counter,
-          counterId: 0,
-          employeeStatus: 1,
-          employeeGender: employee.gender,
-        },
+        body: employee,
       }),
       invalidatesTags: [{ type: "Employee", id: "LIST" }],
     }),
 
     updateEmployee: builder.mutation({
-      query: ({ id, ...patch }) => ({
-        url: `users/${id}`,
+      query: ({ _id, ...patch }) => ({
+        url: `employees/${_id}`,
         method: "PUT",
         body: patch,
       }),
@@ -65,28 +54,11 @@ export const employeeAPI = createApi({
       invalidatesTags: [{ type: "Employee", id: "LIST" }],
     }),
 
-    changeEmployeeStatusToActive: builder.mutation({
+    changeEmployeeStatus: builder.mutation({
       query: (id) => ({
-        url: `users/${id}`,
+        url: `employees/change-status/${id}`,
         method: "PUT",
-        body: { Status: 0 },
-      }),
-      invalidatesTags: [{ type: "Employee", id: "LIST" }],
-    }),
-
-    changeEmployeeStatusToInactive: builder.mutation({
-      query: (id) => ({
-        url: `users/${id}`,
-        method: "PUT",
-        body: { Status: 1 },
-      }),
-      invalidatesTags: [{ type: "Employee", id: "LIST" }],
-    }),
-    changeEmployeeStatusToDeleted: builder.mutation({
-      query: (id) => ({
-        url: `users/${id}`,
-        method: "PUT",
-        body: { Status: 3 },
+        // body: { Status: 0 },
       }),
       invalidatesTags: [{ type: "Employee", id: "LIST" }],
     }),
@@ -98,8 +70,6 @@ export const {
   useAddEmployeeMutation,
   useUpdateEmployeeMutation,
   useRemoveEmployeeMutation,
-  useChangeEmployeeStatusToActiveMutation,
-  useChangeEmployeeStatusToInactiveMutation,
-  useChangeEmployeeStatusToDeletedMutation,
+  useChangeEmployeeStatusMutation,
   useGetEmployeeByIdQuery,
 } = employeeAPI;

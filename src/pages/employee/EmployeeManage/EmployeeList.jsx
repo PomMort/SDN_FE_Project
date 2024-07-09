@@ -7,18 +7,16 @@ export default function EmployeeList({
   employeesData,
   onEditEmployee,
   handleRemoveEmployee,
-  handleInactiveEmployee,
   handleActiveEmployee,
-  handleDeletedEmployee,
   loading,
 }) {
   const navigate = useNavigate();
   const actionsMenu = (record) => (
-    <Menu>
+    <Menu align="center">
       <Menu.Item
         key="detail"
         className="submenu-usertable"
-        onClick={() => navigate(`/employee/${record.EmployeeId}`)}
+        onClick={() => navigate(`/employee/${record._id}`)}
       >
         <span>View Detail</span>
       </Menu.Item>
@@ -31,68 +29,13 @@ export default function EmployeeList({
         <span>Edit Employee</span>
       </Menu.Item>
 
-      {record.Status === 0 ? (
+      {record.status == true ? (
         <>
           <Menu.Item key="inactive" className="submenu-usertable">
             <Popconfirm
+              style={{ width: "100%" }}
               title="Are you sure you want to inactive this user?"
-              onConfirm={() => handleInactiveEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Inactive</span>
-            </Popconfirm>
-          </Menu.Item>
-          <Menu.Item key="deleted" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to delete this user?"
-              onConfirm={() => handleDeletedEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Deleted</span>
-            </Popconfirm>
-          </Menu.Item>
-        </>
-      ) : record.Status === 1 ? (
-        <>
-          <Menu.Item key="active" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to activate this user?"
-              onConfirm={() => handleActiveEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Active</span>
-            </Popconfirm>
-          </Menu.Item>
-          <Menu.Item key="deleted" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to delete this user?"
-              onConfirm={() => handleDeletedEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Deleted</span>
-            </Popconfirm>
-          </Menu.Item>
-        </>
-      ) : record.Status === 3 ? (
-        <>
-          <Menu.Item key="active" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to activate this user?"
-              onConfirm={() => handleActiveEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Active</span>
-            </Popconfirm>
-          </Menu.Item>
-          <Menu.Item key="inactive" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to inactive this user?"
-              onConfirm={() => handleInactiveEmployee(record.EmployeeId)}
+              onConfirm={() => handleActiveEmployee(record._id)}
               okText="Yes"
               cancelText="No"
             >
@@ -104,32 +47,13 @@ export default function EmployeeList({
         <>
           <Menu.Item key="active" className="submenu-usertable">
             <Popconfirm
+              style={{ width: "100%" }}
               title="Are you sure you want to activate this user?"
-              onConfirm={() => handleActiveEmployee(record.EmployeeId)}
+              onConfirm={() => handleActiveEmployee(record._id)}
               okText="Yes"
               cancelText="No"
             >
               <span>Active</span>
-            </Popconfirm>
-          </Menu.Item>
-          <Menu.Item key="inactive" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to inactive this user?"
-              onConfirm={() => handleInactiveEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Inactive</span>
-            </Popconfirm>
-          </Menu.Item>
-          <Menu.Item key="deleted" className="submenu-usertable">
-            <Popconfirm
-              title="Are you sure you want to delete this user?"
-              onConfirm={() => handleDeletedEmployee(record.EmployeeId)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <span>Deleted</span>
             </Popconfirm>
           </Menu.Item>
         </>
@@ -138,7 +62,7 @@ export default function EmployeeList({
       <Menu.Item key="remove">
         <Popconfirm
           title="Are you sure you want to remove this user?"
-          onConfirm={() => handleRemoveEmployee(record.EmployeeId)}
+          onConfirm={() => handleRemoveEmployee(record._id)}
           okText="Yes"
           cancelText="No"
         >
@@ -150,12 +74,12 @@ export default function EmployeeList({
     </Menu>
   );
 
-  console.log(employeesData);
+  // console.log(employeesData);
   const dataWithNo = employeesData?.map((item, index) => ({
     ...item,
     no: index + 1,
   }));
-  console.log(dataWithNo);
+  // console.log(dataWithNo);
 
   const columns = [
     {
@@ -182,19 +106,14 @@ export default function EmployeeList({
       dataIndex: "phone",
       key: "phone",
     },
-    {
-      title: "Counter",
-      dataIndex: "counterName",
-      key: "CounterName",
-      render: (counterName) => (counterName ? `${counterName}` : "No Counter"),
-    },
+
     {
       title: "Gender",
-      dataIndex: "employeeGender",
+      dataIndex: "gender",
       align: "center",
       key: "gender",
-      render: (employeeGender) =>
-        employeeGender === 0 ? (
+      render: (gender) =>
+        gender === false ? (
           <i className="ri-user-fill" style={{ color: "#4f6c95" }}>
             <RiUserFill />
           </i>
@@ -204,65 +123,45 @@ export default function EmployeeList({
           </i>
         ),
     },
-    {
-      title: "Role",
-      dataIndex: "roleId",
-      align: "center",
-      key: "roleId",
-      render: (roleId) => (
-        <Tag
-          color={
-            roleId === 1
-              ? "green"
-              : roleId === 2
-              ? "gold"
-              : roleId === 3
-              ? "geekblue"
-              : roleId === 4
-              ? "cyan"
-              : "warning"
-          }
-        >
-          {roleId === 1
-            ? "Super Admin"
-            : roleId === 2
-            ? "Admin"
-            : roleId === 3
-            ? "Manager"
-            : roleId === 4
-            ? "Staff"
-            : "NaN"}
-        </Tag>
-      ),
-    },
+    // {
+    //   title: "Role",
+    //   dataIndex: "roleId",
+    //   align: "center",
+    //   key: "roleId",
+    //   render: (roleId) => (
+    //     <Tag
+    //       color={
+    //         roleId === 1
+    //           ? "green"
+    //           : roleId === 2
+    //           ? "gold"
+    //           : roleId === 3
+    //           ? "geekblue"
+    //           : roleId === 4
+    //           ? "cyan"
+    //           : "warning"
+    //       }
+    //     >
+    //       {roleId === 1
+    //         ? "Super Admin"
+    //         : roleId === 2
+    //         ? "Admin"
+    //         : roleId === 3
+    //         ? "Manager"
+    //         : roleId === 4
+    //         ? "Staff"
+    //         : "NaN"}
+    //     </Tag>
+    //   ),
+    // },
     {
       title: "Status",
       align: "center",
       key: "Status",
-      dataIndex: "employeeStatus",
-      render: (employeeStatus) => (
-        <Tag
-          color={
-            employeeStatus === 0
-              ? "green-inverse"
-              : employeeStatus === 1
-              ? "orange-inverse"
-              : employeeStatus === 2
-              ? "#333333"
-              : employeeStatus === 3
-              ? "volcano-inverse"
-              : "#000000"
-          }
-        >
-          {employeeStatus === 0
-            ? "Active"
-            : employeeStatus === 1
-            ? "Inactive"
-            : employeeStatus === 2
-            ? "Unassign"
-            : employeeStatus === 3
-            ? "Deleted"
-            : "NaN"}
+      dataIndex: "status",
+      render: (status) => (
+        <Tag color={status === true ? "green-inverse" : "volcano-inverse"}>
+          {status === true ? "Active" : "Inactive"}
         </Tag>
       ),
     },

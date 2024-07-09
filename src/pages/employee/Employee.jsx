@@ -6,12 +6,10 @@ import ButtonCreate from "../../components/ButtonFilter/ButtonCreate";
 import CreateEmployeeModal from "./EmployeeManage/CreateEmployeeModal";
 import {
   useAddEmployeeMutation,
-  useChangeEmployeeStatusToActiveMutation,
-  useChangeEmployeeStatusToDeletedMutation,
-  useChangeEmployeeStatusToInactiveMutation,
   useRemoveEmployeeMutation,
   useGetAllEmployeeQuery,
   useUpdateEmployeeMutation,
+  useChangeEmployeeStatusMutation,
 } from "../../services/employeeAPI";
 import EmployeeList from "./EmployeeManage/EmployeeList";
 import UpdateEmployeeModal from "./EmployeeManage/UpdateEmployeeModal";
@@ -29,12 +27,8 @@ export default function Employee() {
     useUpdateEmployeeMutation();
   const [removeEmployee, { isLoading: isLoadingRemove }] =
     useRemoveEmployeeMutation();
-  const [activeEmployee, { isLoading: isLoadingActive }] =
-    useChangeEmployeeStatusToActiveMutation();
-  const [inactiveEmployee, { isLoading: isLoadingInactivee }] =
-    useChangeEmployeeStatusToInactiveMutation();
-  const [deletedEmployee, { isLoading: isLoadingDeleted }] =
-    useChangeEmployeeStatusToDeletedMutation();
+  const [changeStatus, { isLoading: isLoadingActive }] =
+    useChangeEmployeeStatusMutation();
 
   useEffect(() => {
     if (!isFetching && employeesData) {
@@ -48,6 +42,7 @@ export default function Employee() {
     setSearchQuery(e.target.value);
   };
 
+  // console.log(employeesData);
   const filteredEmployees = employeesData?.data.filter(
     (employee) =>
       employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,38 +50,47 @@ export default function Employee() {
   );
 
   const handleCreateEmployee = async (values) => {
-    // console.log(values);
     try {
-      const response = await addEmployee(values);
+      const response = await addEmployee(values).unwrap();
 
       console.log(response);
-      if (response.error.originalStatus === 200) {
+      if (response.data.status === "success") {
         message.success("Employee created successfully");
         setIsCreateModalVisible(false);
         refetch();
       } else {
-        message.error("Employee created unsuccessfully");
+        console.log(response.error.data.description);
+
+        message.error(response.error.data.description);
       }
     } catch (error) {
-      message.error("Failed to create employee");
+      console.log(error);
+      message.error(error.data.description);
     }
   };
 
   const handleUpdateEmployee = async (values) => {
-    console.log(values);
-
     try {
-      await updateEmployee({
+      const response = await updateEmployee({
         id: selectedEmployee.EmployeeId,
         ...values,
       }).unwrap();
+
+      // Handle success response
+      console.log(response); // Inspect the response object
       message.success("Employee updated successfully");
       setIsUpdateModalVisible(false);
       refetch();
     } catch (error) {
-      message.error("Failed to update employee");
+      console.error(error.data);
+      if (error.data.status === "error") {
+        message.error(error.data.description);
+      } else {
+        message.error("Failed to update employee");
+      }
     }
   };
+
   const handleRemoveEmployee = async (value) => {
     try {
       await removeEmployee(value).unwrap(); // Call the deleteEmployee mutation with the selected employee's ID
@@ -97,31 +101,13 @@ export default function Employee() {
       message.error("Failed to remove employee");
     }
   };
-  const handleActiveEmployee = async (value) => {
+  const handleChangeStatus = async (value) => {
     try {
-      await activeEmployee(value).unwrap(); // Call the deleteEmployee mutation with the selected employee's ID
+      const response = await changeStatus(value).unwrap();
       message.success("Employee active successfully");
       refetch();
     } catch (error) {
-      message.error("Failed to active employee");
-    }
-  };
-  const handleInactiveEmployee = async (value) => {
-    try {
-      await inactiveEmployee(value).unwrap(); // Call the deleteEmployee mutation with the selected employee's ID
-      message.success("Employee inactive successfully");
-      refetch();
-    } catch (error) {
-      message.error("Failed to inactive employee");
-    }
-  };
-  const handleDeletedEmployee = async (value) => {
-    try {
-      await deletedEmployee(value).unwrap(); // Call the deleteEmployee mutation with the selected employee's ID
-      message.success("Employee deleted successfully");
-      refetch();
-    } catch (error) {
-      message.error("Failed to deleted employee");
+      message.error(error);
     }
   };
 
@@ -156,9 +142,7 @@ export default function Employee() {
             setIsUpdateModalVisible(true);
           }}
           handleRemoveEmployee={handleRemoveEmployee}
-          handleActiveEmployee={handleActiveEmployee}
-          handleInactiveEmployee={handleInactiveEmployee}
-          handleDeletedEmployee={handleDeletedEmployee}
+          handleActiveEmployee={handleChangeStatus}
         />
       </div>
       <CreateEmployeeModal

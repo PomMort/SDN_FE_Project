@@ -5,15 +5,19 @@ import { logout, selectAuth, selectToken } from "../slices/auth.slice";
 import { notification } from "antd";
 
 const AuthGuard = ({ allowedRoles, children }) => {
-  const token = useSelector(selectToken);
+  const token = localStorage.getItem("token");
   const auth = useSelector(selectAuth);
-  const exp = auth.exp; //1720494150
+  const exp = auth?.exp; //1720494150
   const dispatch = useDispatch();
+  // const tokenWeb = localStorage.getItem("token");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const currentTime = Math.floor(Date.now() / 1000); // Convert to seconds
+    // if (!token) {
+    //   navigate("/login");
+    // }
     if (exp && exp < currentTime) {
       dispatch(logout());
       notification.error({
@@ -22,7 +26,7 @@ const AuthGuard = ({ allowedRoles, children }) => {
       });
       // navigate("/login", { replace: true });
     }
-  }, [exp, dispatch, navigate]);
+  }, [exp, dispatch, navigate, token]);
 
   if (!token) {
     return <Navigate to="/login" replace />;

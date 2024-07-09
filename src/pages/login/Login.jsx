@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"; // Import React if not alrea
 
 // Import the image file
 import "./Login.css";
-import { Alert, Button, Form, Input, notification } from "antd";
+import { Alert, Button, Form, Input, message, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAuth, setToken } from "../../slices/auth.slice";
@@ -16,32 +16,32 @@ function Login() {
   const navigate = useNavigate();
 
   const [login, { isLoading }] = useLoginMutation();
-
   const handleSubmit = async (values) => {
-    const result = await login({
-      email: values.email,
-      password: values.password,
-    });
+    try {
+      const result = await login({
+        email: values.email,
+        password: values.password,
+      }).unwrap();
 
-    if (result.data.data !== null) {
-      const data = result.data.data;
-      const token = data.token;
-      const auth = jwtDecode(data.token); // decode your token here
+      if (result.status === "success") {
+        notification.success({
+          message: "Login successfully",
+          description: "Welcome to Luminary!",
+        });
 
-      // console.log(auth);
+        const data = result.data;
+        const token = data.token;
+        const auth = jwtDecode(token); // decode your token here
 
-      dispatch(setAuth(auth));
-      dispatch(setToken(token));
-
-      notification.success({
-        message: "Login successfully",
-        description: "Welcome to Luminary !",
-      });
-    } else if (result.error) {
-      notification.error({
-        message: "Login Unsuccessfully",
-        description: "Invalid email or password!",
-      });
+        dispatch(setAuth(auth));
+        dispatch(setToken(token));
+        console.log(result);
+      } else {
+        message.error(result.message || "Login failed");
+      }
+    } catch (error) {
+      console.error(error); // Inspect the error object
+      message.error(error.data?.description || "Failed to login");
     }
   };
 

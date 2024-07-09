@@ -4,7 +4,7 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { selectAuth, selectToken } from "../slices/auth.slice";
 
 const GuestGuard = ({ children }) => {
-  const token = useSelector(selectToken);
+  const token = localStorage.getItem("token");
   const auth = useSelector(selectAuth);
   const navigate = useNavigate();
 
