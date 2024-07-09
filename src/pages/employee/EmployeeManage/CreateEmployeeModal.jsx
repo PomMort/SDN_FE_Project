@@ -21,31 +21,24 @@ const CreateEmployeeModal = ({
     }
   }, [form, visible]);
 
-  const handleDateChange = (date, dateString) => {
-    // console.log("Selected DOB:", date);
-  };
-
-  // const handleUserTypeChange = (value) => {
-  //   setUserType(value);
-  //   if (value === 1 || value === 2 || value === 3) {
-  //     form.setFieldsValue({ counter: null });
-  //   }
-  // };
-
   const checkEmailExists = (_, email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email) {
       return Promise.reject("Please input the email of the user!");
     }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       return Promise.reject("Please input a valid email address!");
     }
-    const emailExists = employeesData.some(
+
+    const emailExists = employeesData.data.some(
       (employee) => employee.email === email
     );
+
     if (emailExists) {
       return Promise.reject("This email is already in use!");
     }
+
     return Promise.resolve();
   };
 
@@ -57,7 +50,7 @@ const CreateEmployeeModal = ({
     if (!phonePattern.test(phone)) {
       return Promise.reject("Please input a valid 10-digit phone number!");
     }
-    const phoneExists = employeesData.some(
+    const phoneExists = employeesData.data.some(
       (employee) => employee.phone === phone
     );
     if (phoneExists) {
@@ -65,7 +58,6 @@ const CreateEmployeeModal = ({
     }
     return Promise.resolve();
   };
-
   return (
     <div className="create-employee-page">
       <Modal
@@ -164,96 +156,16 @@ const CreateEmployeeModal = ({
                 ]}
               >
                 <Radio.Group>
-                  <Radio value={0}> Male </Radio>
-                  <Radio value={1}> Female </Radio>
+                  <Radio value={false}> Male </Radio>
+                  <Radio value={true}> Female </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
-            {/* <Col span={8}>DoB:</Col>
-            <Col span={16}>
-              <Form.Item
-                name="dob"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the date of birth!",
-                  },
-                ]}
-              >
-                <DatePicker
-                  format="DD/MM/YYYY"
-                  style={{ width: "100%" }}
-                  placeholder="Input DOB..."
-                  onChange={handleDateChange}
-                />
-              </Form.Item>
-            </Col> */}
-            <Col span={8}>User Type:</Col>
-            <Col span={16}>
-              <Form.Item
-                name="role"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select the role of the user!",
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="Select user type: "
-                  // onChange={handleUserTypeChange}
-                >
-                  {RoleOption.map((option) => (
-                    <Option key={option.value} value={option.value}>
-                      {option.label}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            {/* {userType !== 1 && userType !== 2 && userType !== 3 && (
-              <>
-                <Col span={8}>
-                  <p>Counter:</p>
-                </Col>
-                <Col span={16}>
-                  <Form.Item
-                    name="counter"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select the counter!",
-                      },
-                    ]}
-                  >
-                    <Select placeholder="Select the counter...">
-                      {CounterOption.map((option) => (
-                        <Option key={option.value} value={option.value}>
-                          {option.label}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </>
-            )} */}
           </Row>
         </Form>
       </Modal>
     </div>
   );
 };
-
-const RoleOption = [
-  // { value: 1, label: "Super Admin" },
-  { value: 2, label: "Admin" },
-  { value: 3, label: "Manager" },
-  { value: 4, label: "Staff" },
-];
-const CounterOption = [
-  { value: 1, label: "Counter 1" },
-  { value: 2, label: "Counter 2" },
-  { value: 3, label: "Counter 3" },
-];
 
 export default CreateEmployeeModal;
