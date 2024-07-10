@@ -20,7 +20,7 @@ export default function OrderList({ orderData, loading }) {
       >
         <span>View Detail</span>
       </Menu.Item>
-      <Menu.Item
+      {/* <Menu.Item
         key="edit"
         className="submenu-usertable"
         onClick={() => onEditEmployee(record)}
@@ -38,7 +38,7 @@ export default function OrderList({ orderData, loading }) {
             <span>Remove employee</span>
           </p>
         </Popconfirm>
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
 
@@ -72,18 +72,18 @@ export default function OrderList({ orderData, loading }) {
       render: (status) => (
         <div style={{ textAlign: "center" }}>
           <Tag
-            color={status === 0 ? "gold" : status === 1 ? "green" : "warning"}
+            color={status === 0 ? "gold" : status === 1 ? "warning" : "error"}
           >
             {status === 0 ? "Buy Back" : status === 1 ? "Selling" : "NaN"}
           </Tag>
         </div>
       ),
     },
-    {
-      title: <div style={{ textAlign: "center" }}>Status</div>,
-      key: "status",
-      dataIndex: "OrderStatus",
-    },
+    // {
+    //   title: <div style={{ textAlign: "center" }}>Status</div>,
+    //   key: "status",
+    //   dataIndex: "OrderStatus",
+    // },
     {
       width: 55,
       key: "action",

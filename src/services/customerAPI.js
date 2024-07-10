@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CUSTOMER_API } from "../config";
+import { API_URL } from "../config";
 import { selectToken } from "../slices/auth.slice";
 
 // Define a service using a base URL and expected endpoints
@@ -7,7 +7,7 @@ export const customerAPI = createApi({
   reducerPath: "customerManagement",
   tagTypes: ["CustomerList"],
   baseQuery: fetchBaseQuery({
-    baseUrl: CUSTOMER_API,
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {

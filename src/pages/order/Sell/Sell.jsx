@@ -3,38 +3,33 @@ import { Button, Input, message } from "antd";
 import CustomerInformation from "./CustomerInformation";
 import ProductSpace from "./ProductSpace";
 import CartSpace from "./CartSpace";
-import CheckoutPage from "./CheckoutPage"; // New component
+import CheckoutPage from "./CheckoutPage";
+import CreateCustomerModal from "./CreateCustomerModal"; // Import the modal
 import "./Sell.css";
 import { useGetAllCustomersQuery } from "../../../services/customerAPI";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../../slices/auth.slice";
 import { useGetProductsQuery } from "../../../services/productAPI";
-import {
-  useGetPromotionByIdQuery,
-  useLazyGetPromotionByCodeQuery,
-} from "../../../services/promotionAPI";
+import { useLazyGetPromotionByCodeQuery } from "../../../services/promotionAPI";
+import { useAddOrderMutation } from "../../../services/orderAPI";
 
-const { Search } = Input; // Destructure Search from Input for clarity
+const { Search } = Input;
 
 export default function Sell() {
   const [cart, setCart] = useState([]);
   const [customerInfo, setCustomerInfo] = useState({});
-  const [step, setStep] = useState(1); // 1 for Sell, 2 for Checkout
+  const [step, setStep] = useState(1);
   const [promotionCode, setPromotionCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [discountId, setDiscountId] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to manage modal visibility
 
-  const {
-    data: customerData,
-    refetch: refetchCustomers,
-    isFetching: isFetchingCustomers,
-  } = useGetAllCustomersQuery();
-  const {
-    data: productData,
-    refetch: refetchProducts,
-    isFetching: isFetchingProducts,
-  } = useGetProductsQuery();
+  const { data: customerData, refetch: refetchCustomers } =
+    useGetAllCustomersQuery();
+  const { data: productData, refetch: refetchProducts } = useGetProductsQuery();
 
-  const [useCode, { data: promotionData }] = useLazyGetPromotionByCodeQuery();
+  const [useCode] = useLazyGetPromotionByCodeQuery();
+  const [addOrder] = useAddOrderMutation();
 
   const auth = useSelector(selectAuth);
 
@@ -80,6 +75,7 @@ export default function Sell() {
       const result = await useCode(promotionCode).unwrap();
       if (result) {
         setDiscount(result.percent);
+        setDiscountId(result._id);
         message.success("Promotion applied successfully!");
       } else {
         setDiscount(0);
@@ -92,15 +88,25 @@ export default function Sell() {
   };
 
   const handleCheckout = () => {
-    setStep(2); // Move to checkout step
+    if (!customerInfo._id) {
+      message.warning("Please select or create a customer.");
+      return;
+    }
+
+    if (cart.length === 0) {
+      message.warning("Your cart is empty. Please add products to your cart.");
+      return;
+    }
+
+    setStep(2);
   };
 
   const handleBack = () => {
-    setStep(1); // Move to sell step
+    setStep(1);
   };
 
   const handleCreateCustomer = () => {
-    console.log("Add customer ");
+    setIsModalVisible(true); // Show the modal
   };
 
   const handleSubmit = async () => {
@@ -110,42 +116,40 @@ export default function Sell() {
     }
 
     const payload = {
-      customerId: customerInfo._id, // Ensure customerInfo._id is valid
-      discount, // Add your discount logic here
+      customerId: customerInfo._id,
+      discount: discountId,
       status: 1,
       products: cart.map((item) => ({
-        productId: item.id,
+        productId: item._id,
         quantity: item.quantity,
         price: item.price,
       })),
     };
-    console.log(payload);
     try {
-      const response = await fetch("/your-api-endpoint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        message.success("Sale successfully submitted!");
-        // Reset cart and customer info if needed
+      const response = await addOrder(payload);
+      console.log(response);
+      if (response.data) {
+        message.success("Sale successfully!");
         setCart([]);
         setCustomerInfo({});
         setStep(1);
       } else {
-        message.error("Failed to submit sale.");
+        message.error(response.error.data.message);
       }
     } catch (error) {
+      console.log(error);
       console.error("Error submitting sale:", error);
       message.error("An error occurred while submitting the sale.");
     }
   };
 
+  const handleCustomerCreate = (newCustomer) => {
+    console.log(newCustomer);
+    setCustomerInfo(newCustomer);
+    refetchCustomers();
+  };
+
   useEffect(() => {
-    // Fetch customers and products on component mount or whenever needed
     refetchCustomers();
     refetchProducts();
   }, [refetchCustomers, refetchProducts]);
@@ -169,15 +173,6 @@ export default function Sell() {
               </div>
               <div className="action-left">
                 <Button onClick={handleCreateCustomer}>Create Customer</Button>
-              </div>
-              <div className="action-left">
-                <Input
-                  style={{ borderRadius: 20, width: 300 }}
-                  placeholder="Enter promotion code..."
-                  value={promotionCode}
-                  onChange={(e) => setPromotionCode(e.target.value)}
-                />
-                <Button onClick={handleApplyPromotion}>Apply Promotion</Button>
               </div>
             </div>
             <div className="customer-information">
@@ -210,7 +205,10 @@ export default function Sell() {
             customerInfo={customerInfo}
             cart={cart}
             setCart={setCart}
+            promotionCode={promotionCode}
+            setPromotionCode={setPromotionCode}
             discount={discount}
+            handleApplyPromotion={handleApplyPromotion}
           />
           <br />
           <br />
@@ -224,6 +222,11 @@ export default function Sell() {
           </div>
         </>
       )}
+      <CreateCustomerModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onCreate={handleCustomerCreate}
+      />
     </div>
   );
 }
