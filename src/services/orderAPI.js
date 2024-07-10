@@ -1,14 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ORDER_API } from "../config";
+import { API_URL } from "../config";
+const token = localStorage.getItem("token");
 
 // Define a service using a base URL and expected endpoints
 export const orderAPI = createApi({
   reducerPath: "orderManagement",
   tagTypes: ["OrderList"],
-  baseQuery: fetchBaseQuery({ baseUrl: ORDER_API }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_URL,
+    prepareHeaders: (headers, { getState }) => {
+      if (token) {
+        headers.append("Authorization", `Bearer ${token}`);
+      }
+      headers.append("Content-Type", "application/json");
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
     getAllOrders: builder.query({
-      query: () => `orders`,
+      query: () => `orders/getAll`,
 
       providesTags: (result, _error, _arg) =>
         result

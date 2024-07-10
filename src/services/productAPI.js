@@ -15,16 +15,16 @@ export const productAPI = createApi({
       headers.append("Content-Type", "application/json");
       return headers;
     },
-  }), endpoints: (builder) => ({
-
+  }),
+  endpoints: (builder) => ({
     getProducts: builder.query({
       query: () => `api/v1/products`,
       providesTags: (result, _error, _arg) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "productManagement", id })),
-            { type: "ProductList", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "productManagement", id })),
+              { type: "ProductList", id: "LIST" },
+            ]
           : [{ type: "ProductList", id: "LIST" }],
     }),
     getProductsById: builder.query({
@@ -76,5 +76,4 @@ export const {
   useAddProductMutation,
   useEditProductMutation,
   useDeleteProductMutation,
-
 } = productAPI;
