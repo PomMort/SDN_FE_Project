@@ -12,6 +12,7 @@ import { selectAuth } from "../../../slices/auth.slice";
 import { useGetProductsQuery } from "../../../services/productAPI";
 import { useLazyGetPromotionByCodeQuery } from "../../../services/promotionAPI";
 import { useAddOrderMutation } from "../../../services/orderAPI";
+import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 
@@ -23,7 +24,7 @@ export default function Sell() {
   const [discount, setDiscount] = useState(0);
   const [discountId, setDiscountId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // State to manage modal visibility
-
+  const navigate = useNavigate();
   const { data: customerData, refetch: refetchCustomers } =
     useGetAllCustomersQuery();
   const { data: productData, refetch: refetchProducts } = useGetProductsQuery();
@@ -133,6 +134,7 @@ export default function Sell() {
         setCart([]);
         setCustomerInfo({});
         setStep(1);
+        navigate("/order");
       } else {
         message.error(response.error.data.message);
       }
