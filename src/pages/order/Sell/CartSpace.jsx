@@ -33,7 +33,7 @@ export default function CartSpace({ cart, setCart }) {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text) => `$${text}`,
+      render: (text) => `${text} VNĐ`,
     },
     {
       title: "Quantity",
@@ -55,7 +55,7 @@ export default function CartSpace({ cart, setCart }) {
     {
       title: "Total",
       key: "total",
-      render: (text, record) => `$${record.price * record.quantity}`,
+      render: (text, record) => `${record.price * record.quantity} VNĐ`,
     },
     {
       title: "Action",
@@ -83,7 +83,7 @@ export default function CartSpace({ cart, setCart }) {
           return (
             <Table.Summary.Row>
               <Table.Summary.Cell colSpan={4}>Total</Table.Summary.Cell>
-              <Table.Summary.Cell>{`$${totalAmount}`}</Table.Summary.Cell>
+              <Table.Summary.Cell>{`${totalAmount} VNĐ`}</Table.Summary.Cell>
               <Table.Summary.Cell></Table.Summary.Cell>
             </Table.Summary.Row>
           );

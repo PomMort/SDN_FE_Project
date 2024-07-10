@@ -42,7 +42,7 @@ const ProductSpace = ({ products, onAddToCart }) => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text) => `$${text}`,
+      render: (text) => `${text} VNĐ`,
       sorter: (a, b) => a.price - b.price,
     },
     {

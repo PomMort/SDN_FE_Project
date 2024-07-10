@@ -1,9 +1,18 @@
 import React from "react";
-import { Button, Card, Divider, Row, Col, message } from "antd";
+import { Button, Card, Divider, Row, Col, message, Input } from "antd";
 import "./Sell.css";
-import Search from "antd/es/input/Search";
 
-export default function CheckoutPage({ customerInfo, cart, setCart }) {
+const { Search } = Input;
+
+export default function CheckoutPage({
+  customerInfo,
+  cart,
+  setCart,
+  promotionCode,
+  setPromotionCode,
+  discount,
+  handleApplyPromotion,
+}) {
   // Calculate total price
   const totalPrice = cart.reduce(
     (sum, product) => sum + product.price * product.quantity,
@@ -24,6 +33,9 @@ export default function CheckoutPage({ customerInfo, cart, setCart }) {
     setCart(updatedCart);
     message.success("Item removed from cart");
   };
+
+  // Calculate total after discount
+  const totalAfterDiscount = totalPrice - (totalPrice * discount) / 100;
 
   return (
     <>
@@ -48,18 +60,18 @@ export default function CheckoutPage({ customerInfo, cart, setCart }) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Button
-                    onClick={() => handleQuantityChange(product.id, -1)}
+                    onClick={() => handleQuantityChange(product._id, -1)}
                     disabled={product.quantity <= 1}
                   >
                     -
                   </Button>
                   <span style={{ margin: "0 10px" }}>{product.quantity}</span>
-                  <Button onClick={() => handleQuantityChange(product.id, 1)}>
+                  <Button onClick={() => handleQuantityChange(product._id, 1)}>
                     +
                   </Button>
                 </div>
                 <div>
-                  <Button type="link" onClick={() => handleRemove(product.id)}>
+                  <Button type="link" onClick={() => handleRemove(product._id)}>
                     Remove
                   </Button>
                 </div>
@@ -78,13 +90,14 @@ export default function CheckoutPage({ customerInfo, cart, setCart }) {
               <Search
                 style={{ borderRadius: 20, width: "100%" }}
                 placeholder="Search promotion code..."
-                // onSearch={onSearch}
+                value={promotionCode}
+                onChange={(e) => setPromotionCode(e.target.value)}
+                onSearch={handleApplyPromotion}
                 enterButton
               />
-
               <p>Subtotal: {totalPrice} VNĐ</p>
-              <p>Discount: {/* Implement discount calculation if any */}</p>
-              <p>Total: {totalPrice} VNĐ</p>
+              <p>Discount: {discount}%</p>
+              <p>Total: {totalAfterDiscount} VNĐ</p>
             </Card>
           </div>
         </Col>
