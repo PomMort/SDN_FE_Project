@@ -6,6 +6,7 @@ import ButtonCreateProduct from "../../components/ButtonFilter/ButtonCreate";
 import OrderList from "./OrderManage/OrderList";
 import OrderModal from "./OrderManage/OrderModal";
 import { useGetAllOrdersQuery } from "../../services/orderAPI";
+import { useNavigate } from "react-router-dom";
 
 export default function Order() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -15,13 +16,17 @@ export default function Order() {
     error: orderError,
     isLoading: isOrderLoading,
   } = useGetAllOrdersQuery();
+  const navigate = useNavigate();
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
+  // const handleMakeOrderClick = () => {
+  //   setIsCreateModalVisible(true);
+  // };
   const handleMakeOrderClick = () => {
-    setIsCreateModalVisible(true);
+    navigate("/order/sell");
   };
 
   const handleCancel = () => {
@@ -31,7 +36,7 @@ export default function Order() {
   const filteredOrderData = useMemo(() => {
     if (!orderData) return [];
     return orderData.filter((order) =>
-      order.OrderId.toString().includes(searchQuery)
+      order._id.toString().includes(searchQuery)
     );
   }, [orderData, searchQuery]);
 

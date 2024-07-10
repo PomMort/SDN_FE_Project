@@ -15,9 +15,7 @@ const AuthGuard = ({ allowedRoles, children }) => {
 
   useEffect(() => {
     const currentTime = Math.floor(Date.now() / 1000); // Convert to seconds
-    // if (!token) {
-    //   navigate("/login");
-    // }
+
     if (exp && exp < currentTime) {
       dispatch(logout());
       notification.error({
@@ -25,6 +23,9 @@ const AuthGuard = ({ allowedRoles, children }) => {
         description: "Your session has expired. Please log in again.",
       });
       // navigate("/login", { replace: true });
+    }
+    if (!token) {
+      navigate("/login");
     }
   }, [exp, dispatch, navigate, token]);
 

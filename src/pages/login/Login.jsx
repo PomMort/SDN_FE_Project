@@ -35,6 +35,7 @@ function Login() {
 
         dispatch(setAuth(auth));
         dispatch(setToken(token));
+        localStorage.setItem("token", token);
         console.log(result);
       } else {
         message.error(result.message || "Login failed");

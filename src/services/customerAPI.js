@@ -19,11 +19,14 @@ export const customerAPI = createApi({
   }),
   endpoints: (builder) => ({
     getAllCustomers: builder.query({
-      query: () => `api/v1/Customer`,
+      query: () => `customers`,
       providesTags: (result, _error, _arg) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "customerManagement", id })),
+              ...result.data.map(({ id }) => ({
+                type: "customerManagement",
+                id,
+              })),
               { type: "CustomerList", id: "LIST" },
             ]
           : [{ type: "CustomerList", id: "LIST" }],
@@ -48,12 +51,12 @@ export const customerAPI = createApi({
       ],
     }),
     deleteCustomer: builder.mutation({
-      query:(customerId)=>({
-        url:`api/v1/Customer/` + customerId,
-        method:"DELETE"
+      query: (customerId) => ({
+        url: `api/v1/Customer/` + customerId,
+        method: "DELETE",
       }),
-      invalidatesTags:[{type: 'CustomerList',id:'LIST'}]
-    })
+      invalidatesTags: [{ type: "CustomerList", id: "LIST" }],
+    }),
   }),
 });
 
@@ -61,5 +64,5 @@ export const {
   useGetAllCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
-  useDeleteCustomerMutation
+  useDeleteCustomerMutation,
 } = customerAPI;

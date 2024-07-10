@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "../config";
-const token = localStorage.getItem("token");
+import { selectToken } from "../slices/auth.slice";
+// const token = localStorage.getItem("token");
 export const employeeAPI = createApi({
   reducerPath: "EmployeeManagement",
   tagTypes: ["EmployeeList"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
+      const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {
         headers.append("Authorization", `Bearer ${token}`);
       }
