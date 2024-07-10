@@ -73,7 +73,7 @@ export const router = createBrowserRouter([
             element: Order,
           },
           {
-            path: "order/:id",
+            path: "order-detail/:id",
             element: OrderDetail,
           },
           {
@@ -108,15 +108,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
-  // {
-  //   path: "login",
-  //   element: Login,
-  // },
-  // {
-  //   path: "forget-password",
-  //   element: ForgetPassword,
-  // },
 
   {
     path: "*",

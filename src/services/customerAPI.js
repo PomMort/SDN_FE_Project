@@ -19,11 +19,14 @@ export const customerAPI = createApi({
   }),
   endpoints: (builder) => ({
     getAllCustomers: builder.query({
-      query: () => `Customer/GetAllCustomers`,
+      query: () => `customers`,
       providesTags: (result, _error, _arg) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "customerManagement", id })),
+              ...result.data.map(({ id }) => ({
+                type: "customerManagement",
+                id,
+              })),
               { type: "CustomerList", id: "LIST" },
             ]
           : [{ type: "CustomerList", id: "LIST" }],

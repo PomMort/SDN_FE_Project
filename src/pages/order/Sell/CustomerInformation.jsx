@@ -1,5 +1,5 @@
 import { Badge, Descriptions } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../../slices/auth.slice";
 
@@ -16,7 +16,7 @@ export default function CustomerInformation({ customerInfo }) {
     {
       key: "2",
       label: "Make by",
-      children: auth.EmployeeName || "-",
+      children: auth.name || "-",
     },
     {
       key: "3",
@@ -33,13 +33,17 @@ export default function CustomerInformation({ customerInfo }) {
       label: "Customer Phone",
       children: customerInfo?.phone || "-",
     },
-
     {
       key: "6",
       label: "Address",
       children: customerInfo?.address || "-",
     },
   ];
+
+  useEffect(() => {
+    // Log to console to verify when customerInfo changes
+    console.log("Customer info changed:", customerInfo);
+  }, [customerInfo]);
 
   return (
     <div>

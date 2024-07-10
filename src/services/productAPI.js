@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { PRODUCT_API } from "../config";
+import { API_URL } from "../config";
 import { selectToken } from "../slices/auth.slice";
 
 export const productAPI = createApi({
   reducerPath: "productManagement",
   tagTypes: ["ProductList"],
   baseQuery: fetchBaseQuery({
-    baseUrl: PRODUCT_API,
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {
@@ -18,7 +18,7 @@ export const productAPI = createApi({
   }),
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: () => `api/v1/products`,
+      query: () => `products`,
       providesTags: (result, _error, _arg) =>
         result
           ? [

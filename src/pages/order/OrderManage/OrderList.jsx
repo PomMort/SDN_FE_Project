@@ -16,7 +16,7 @@ export default function OrderList({ orderData, loading }) {
       <Menu.Item
         key="detail"
         className="submenu-usertable"
-        onClick={() => navigate(`/employee/${record.EmployeeId}`)}
+        onClick={() => navigate(`/order-detail/${record._id}`)}
       >
         <span>View Detail</span>
       </Menu.Item>
@@ -50,29 +50,31 @@ export default function OrderList({ orderData, loading }) {
       width: 55,
     },
     {
-      title: <div style={{ textAlign: "start" }}>Order Id</div>,
-      dataIndex: "OrderId",
-      key: "orderId",
+      title: <div style={{ textAlign: "start" }}>Customer</div>,
+      dataIndex: ["customerId", "name"], // Assuming "name" is nested within "customerId"
+      key: "customerName", // Unique key for the column
     },
     {
-      title: <div style={{ textAlign: "start" }}>Employee Id</div>,
-      dataIndex: "EmployeeId",
+      title: <div style={{ textAlign: "start" }}>Employee</div>,
+      dataIndex: ["employeeId", "name"], // Assuming "name" is nested within "customerId"
       key: "EmployeeId",
     },
     {
       title: <div style={{ textAlign: "start" }}>Date</div>,
-      dataIndex: "OrderDate",
+      dataIndex: "createdAt",
       key: "date",
       render: (OrderDate) => dayjs(OrderDate).format("DD/MM/YYYY"),
     },
     {
       title: <div style={{ textAlign: "center" }}>Type</div>,
-      dataIndex: "Type",
-      key: "type",
-      render: (Type) => (
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
         <div style={{ textAlign: "center" }}>
-          <Tag color={Type === 0 ? "gold" : Type === 1 ? "green" : "warning"}>
-            {Type === 0 ? "Buy Back" : Type === 1 ? "Selling" : "NaN"}
+          <Tag
+            color={status === 0 ? "gold" : status === 1 ? "green" : "warning"}
+          >
+            {status === 0 ? "Buy Back" : status === 1 ? "Selling" : "NaN"}
           </Tag>
         </div>
       ),
