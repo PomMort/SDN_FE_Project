@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Customer.css";
-import { Input } from "antd";
+import { Input, notification } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ButtonCreateProduct from "../../components/ButtonFilter/ButtonCreate";
 import CustomerList from "./CustomerManage/CustomerList";
@@ -46,6 +46,9 @@ export default function Customer() {
     setLoading(true);
     try {
       await createCustomer(values).unwrap();
+      notification.success({
+        message: "Create customer successfully !!!",
+      })
       refetch();
       setIsCreateModalVisible(false);
     } catch (error) {
@@ -100,6 +103,7 @@ export default function Customer() {
           customerData={filteredCustomer}
           loading={loading}
           handleEdit={handleEdit}
+          refetch={refetch}
         />
       </div>
       <CreateCustomerModal

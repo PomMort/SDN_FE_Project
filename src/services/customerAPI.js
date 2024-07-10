@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_URL } from "../config";
+import { CUSTOMER_API } from "../config";
 import { selectToken } from "../slices/auth.slice";
 
 // Define a service using a base URL and expected endpoints
@@ -7,7 +7,7 @@ export const customerAPI = createApi({
   reducerPath: "customerManagement",
   tagTypes: ["CustomerList"],
   baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
+    baseUrl: CUSTOMER_API,
     prepareHeaders: (headers, { getState }) => {
       const token = selectToken(getState()); // Retrieve token from Redux state using selectToken selector
       if (token) {
@@ -33,7 +33,7 @@ export const customerAPI = createApi({
     }),
     createCustomer: builder.mutation({
       query: (newCustomer) => ({
-        url: `/Customer/AddCustomer`,
+        url: `api/v1/Customer`,
         method: "POST",
         body: newCustomer,
       }),
@@ -41,7 +41,7 @@ export const customerAPI = createApi({
     }),
     updateCustomer: builder.mutation({
       query: (customer) => ({
-        url: `/Customer/UpdateCustomer/?customerId=${customer.customerId}`,
+        url: `api/v1/Customer/` + customer.id,
         method: "PUT",
         body: customer,
       }),
@@ -50,6 +50,13 @@ export const customerAPI = createApi({
         { type: "CustomerList", id: "LIST" },
       ],
     }),
+    deleteCustomer: builder.mutation({
+      query: (customerId) => ({
+        url: `api/v1/Customer/` + customerId,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "CustomerList", id: "LIST" }],
+    }),
   }),
 });
 
@@ -57,4 +64,5 @@ export const {
   useGetAllCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
+  useDeleteCustomerMutation,
 } = customerAPI;
