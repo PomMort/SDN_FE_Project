@@ -3,14 +3,17 @@ import React from 'react'
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useState } from "react";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import UpdateCategoryModal from './UpdateCategoryModal';
 
 
 // import '../product/ProductManagement/ProductList.css'
 
-export default function CategoryList({ categoryData = [] }) {
-
+export default function CategoryList({ categoryData = [], handleDeleteCategory, handleEditCategory }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categorySelected, setCategorySelected] = useState(null);
     const handlePopoverVisibleChange = (index, visible) => {
         setOpen({ ...open, [index]: visible }); // Cập nhật trạng thái của Popover
+        // console.log(categoryData);
     }
     const columns = [
         {
@@ -45,21 +48,25 @@ export default function CategoryList({ categoryData = [] }) {
                     <Popover
                         content={
                             <div className="pop-up" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                <div>
+                                {/* <div>
                                     <EyeOutlined style={{ paddingRight: '8px' }} />
                                     <Button type="text" >
                                         <p className="">View Category Detail</p></Button>
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <DeleteOutlined style={{ paddingRight: '8px' }} />
-                                    <Button type="text">
+                                    <Button type="text" onClick={() => handleDeleteCategory(record?.id)}>
                                         <p className="">Delete Category</p></Button>
                                 </div>
 
                                 <div>
                                     <EditOutlined style={{ paddingRight: '8px' }} />
-                                    <Button type="text" >
+                                    <Button type="text" onClick={() => {
+                                        setIsModalOpen(true);
+                                        handlePopoverVisibleChange(index, false);
+                                        setCategorySelected(record.id);
+                                    }}>
                                         <p className="">Edit Category</p></Button>
                                 </div>
                             </div>
@@ -77,17 +84,24 @@ export default function CategoryList({ categoryData = [] }) {
             ),
         },
     ];
-    // Ensure productData is an array
+    // Ensure categoryData is an array
     const data = categoryData.map((item, index) => ({
         key: index + 1,
-        category: item?.CategoryName,
+        id: item?._id,
+        category: item?.name,
     }));
     const [open, setOpen] = useState(Array(categoryData.length).fill(false));
     return (
         <div>
 
             <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
-
+            <UpdateCategoryModal
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                categorySelected={categorySelected}
+                setCategorySelected={setCategorySelected}
+                handleEditCategory={handleEditCategory}
+            />
         </div>
     )
 }

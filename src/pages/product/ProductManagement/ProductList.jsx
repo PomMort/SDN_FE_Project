@@ -1,4 +1,4 @@
-import {  Table, Button, Popover, ConfigProvider } from 'antd';
+import { Table, Button, Popover, ConfigProvider, Badge } from 'antd';
 import React from 'react';
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useState } from "react";
@@ -31,26 +31,55 @@ export default function ProductList({ productData = [], handldeDeleteProduct, ha
             key: 'name',
         },
         {
-            title: 'Barcode',
-            dataIndex: 'code',
-            key: 'code',
+            title: 'Image',
+            dataIndex: 'image',
+            key: 'image',
+            width: '350px',
+            render: (_, record, index) => (
+
+                <img src={record?.image}
+                    style={{ width: "50%", height: "50%", objectFit: 'cover' }}
+                />
+
+
+            )
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-        }, {
-            title: 'Weight',
-            dataIndex: 'weight',
-            key: 'weight',
+            render: (_, record, index) => {
+                // console.log(record);
+                return (
+                    <span>
+                        {record?.category ? record?.category : <span style={{ marginLeft: '7px' }}> Null </span>}
+                    </span>
+                )
+            }
+
+
         }, {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
-        }, {
-            title: 'Counter',
-            dataIndex: 'counter',
-            key: 'counter',
+            render: (text) => `${text} VNĐ`,
+        },
+        // {
+        //     title: 'Quantity',
+        //     dataIndex: 'quantity',
+        //     key: 'quantity',
+        // },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (_, record, index) => (
+                <div>
+                    {record.status == true ? <Badge status="success" text="Active" />
+                        : <Badge status="error" text="Inactive" />}
+                </div>
+
+            )
         },
         {
             title: 'Action',
@@ -114,20 +143,22 @@ export default function ProductList({ productData = [], handldeDeleteProduct, ha
     // Ensure productData is an array
     const data = productData.map((item, index) => ({
         key: index + 1,
-        id: item?.id,
-        name: item?.Name,
-        code: item?.Barcode,
-        category: item?.Category,
-        weight: item?.Weight,
-        price: item?.Price,
-        counter: item?.CounterId,
+        id: item?._id,
+        name: item?.name,
+        image: item?.image,
+        category: item?.categoryId?.name,
+        status: item?.isActive,
+        price: item?.price,
+        // quantity: item?.quantity
     }));
     const [open, setOpen] = useState(Array(productData.length).fill(false));
 
     return (
         <>
             <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
-            <UpdateProductModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} productSelected={productSelected} setProductSelected={setProductSelected} handleEditProduct={handleEditProduct} />
+            <UpdateProductModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} 
+            productSelected={productSelected} 
+            setProductSelected={setProductSelected} handleEditProduct={handleEditProduct} />
         </>
     )
 }

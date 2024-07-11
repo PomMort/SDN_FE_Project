@@ -35,7 +35,7 @@ export default function Customer() {
   };
 
   const filteredCustomer = customerData
-    ?.filter(
+    ?.data.filter(
       (customer) =>
         customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         customer.phone.includes(searchQuery)

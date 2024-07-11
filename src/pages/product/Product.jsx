@@ -4,7 +4,6 @@ import ProductList from "./ProductManagement/ProductList";
 import { Input, notification, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ButtonViewCategory from "../../components/ButtonFilter/ButtonViewCategory";
-import ButtonFilter from "../../components/ButtonFilter/ButtonFilter";
 import CreateProductModal from './ProductManagement/CreateProductModal';
 import { useNavigate } from 'react-router-dom';
 import { useEditProductMutation, useGetProductsQuery } from '../../services/productAPI';
@@ -37,8 +36,7 @@ export default function Product() {
     }))
 
     ?.filter(product =>
-      product?.Name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      product?.Barcode.toLowerCase().includes(searchInput.toLowerCase()),
+      product?.name.toLowerCase().includes(searchInput.toLowerCase())
     );
 
   const handleAddProduct = async (values) => {
@@ -61,17 +59,18 @@ export default function Product() {
     try {
       await deleteProduct(id).unwrap();
       notification.success({
-        message: "Delete product successfully !!!",
+        message: "Deactive product successfully !!!",
       });
       refetch();
     } catch (error) {
       console.log(error);
       notification.error({
-        message: "Delete product failed !!!",
+        message: "Deactive product failed !!!",
       });
     }
   }
   const handleEditProduct = async (values) => {
+    // console.log(values);
     try {
       await editProductMutation(values).unwrap();
       notification.success({
@@ -108,7 +107,6 @@ export default function Product() {
             value={searchInput}
             onChange={handleSearchInputChange}
           />
-          <ButtonFilter contentBtn={"Filter"} />
         </div>
         <div className="edit-header-button">
           <div className="action-right">

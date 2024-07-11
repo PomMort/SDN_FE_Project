@@ -1,21 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Modal, Form, Input, message, DatePicker } from 'antd';
 // import { UploadFile } from 'antd';
-import {
-    Modal, Button,
-    DatePicker,
-    Form,
-    Input,
-
-} from 'antd';
 import ButtonCreateCategory from '../../../components/ButtonFilter/ButtonCreateCategory';
 
 
-export default function CreateCategoryModal(onCancel) {
+export default function CreateCategoryModal({ onCancel, onCreate, }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
-
-
+    const [form] = Form.useForm();
     const { RangePicker } = DatePicker;
     const formItemLayout = {
         labelCol: {
@@ -37,7 +29,27 @@ export default function CreateCategoryModal(onCancel) {
         if (onCancel) onCancel();
     };
 
+    const handleOk = async () => {
+        setLoading(true);
+        try {
+            let values = await form.validateFields();
 
+            values = {
+                ...values,
+                name: values?.name,
+            };
+            // console.log(values);
+            await onCreate(values); // Thêm sản phẩm vào danh sách
+            form.resetFields(); // Reset form sau khi tạo thành công
+            setLoading(false);
+            setIsModalOpen(false); // Đóng modal sau khi tạo thành công
+            // console.log(productData);
+
+        } catch (error) {
+            console.log("Validation Failed:", error);
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -61,16 +73,17 @@ export default function CreateCategoryModal(onCancel) {
                 cancelText="Cancel"
                 okButtonProps={{ loading }}
                 onCancel={handleCancelModal}
-            // onOk={handleOk}
+                onOk={handleOk}
 
             >
                 <Form
                     {...formItemLayout}
+                    form={form}
                     style={{ maxWidth: 600 }}
                 >
                     <Form.Item
                         label="Category Name"
-                        name="CategoryName"
+                        name="name"
                         rules={[{ required: true, message: 'Please input!' }]}
                     >
                         <Input />
@@ -79,9 +92,6 @@ export default function CreateCategoryModal(onCancel) {
                     <Form.Item
                         wrapperCol={{ offset: 6, span: 16 }}
                     >
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
                     </Form.Item>
                 </Form>
             </Modal>

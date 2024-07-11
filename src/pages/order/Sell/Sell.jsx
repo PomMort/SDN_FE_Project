@@ -175,7 +175,7 @@ export default function Sell() {
                 />
               </div>
               <div className="action-left">
-                <Button onClick={handleCreateCustomer}>Create Customer</Button>
+                <Button onClick={handleCreateCustomer} style={{backgroundColor:'black', color:'#fff', fontWeight:'bold'}}>Create Customer</Button>
               </div>
             </div>
             <div className="customer-information">

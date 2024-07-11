@@ -35,7 +35,7 @@ export default function ViewProductDetail() {
     //     // console.log(productData);
     //     // console.log(productError);
     // }, [productData, productError]);
-
+    // console.log();
 
     const navigate = useNavigate()
     const handleBack = () => {
@@ -61,7 +61,7 @@ export default function ViewProductDetail() {
                 <Layout>
                     <Sider width="55%" style={siderStyle}>
                         <div className='container-img'>
-                            <img src={productData?.Img}
+                            <img src={productData?.image}
                                 style={{
                                     width: '100%',
                                     height: 'auto',
@@ -75,27 +75,24 @@ export default function ViewProductDetail() {
                         <div style={{ margin: '22px 0px 0px 0px', fontSize: '20px' }}>
                             <p>
                                 Name:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Name}</span>
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.name}</span>
                             </p>
+
                             <p>
-                                Barcode:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Barcode}</span>
+                                Price:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.price}</span>
                             </p>
                             <p>
                                 Category:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Category}</span>
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.categoryId?.name}</span>
                             </p>
                             <p>
-                                Weight:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Weight}</span>
+                                Description:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.description}</span>
                             </p>
                             <p>
-                                Price:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Price}</span>
-                            </p>
-                            <p>
-                                Counter:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.CounterId}</span>
+                                Quantity:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.quantity}</span>
                             </p>
                         </div>
                     </Content>

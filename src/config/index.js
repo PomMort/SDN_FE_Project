@@ -7,6 +7,7 @@ const publicRuntimeConfig = {
   PRODUCT_API: import.meta.env.VITE_PRODUCT_MANAGE,
   PROMOTION_API: import.meta.env.VITE_PROMOTION_MANAGE,
   
+  
 
   // create fake token here
 };
