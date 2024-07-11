@@ -1,185 +1,163 @@
-import React, { useState } from 'react';
-import {
-    Modal, Button,
-    DatePicker,
-    Form,
-    Input,
-    Calendar,
-    Popover,
-    theme,
-    Select,
-    notification,
-} from 'antd';
-import ButtonCreatePromotion from '../../../components/ButtonFilter/ButtonCreatePromotion';
-import { Option } from 'antd/es/mentions';
-import { convertDateStringToTimeStamp } from '../../../utils/utils';
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Row, Col, DatePicker, InputNumber } from "antd";
 
-export default function CreatePromotionModal({ onCreate }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [discountUnit, setDiscountUnit] = useState("2");
-    const [datePicker, setDatePicker] = useState([]);
-    const [datePickerDayjs, setDatePickerDayjs] = useState([]);
-    const [form] = Form.useForm();
+const { RangePicker } = DatePicker;
 
-    const { token } = theme.useToken();
-    const wrapperStyle = {
-        width: 300,
-        border: `1px solid ${token.colorBorderSecondary}`,
-        borderRadius: token.borderRadiusLG,
-    };
+const CreatePromotionModal = ({
+  visible,
+  onCreate,
+  onCancel,
+  loading,
+  promotionData,
+}) => {
+  const [form] = Form.useForm();
+  const [existingPromotionCodes, setExistingPromotionCodes] = useState([]);
 
-    const { RangePicker } = DatePicker;
-    const formItemLayout = {
-        labelCol: {
-            xs: { span: 24 },
-            sm: { span: 6 },
-        },
-        wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 14 },
-        },
-    };
-
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCancelModal = () => {
-        setIsModalOpen(false);
-    };
-    const handleValidateDiscount = (_, value) => {
-        if (!value) {
-            return Promise.reject(new Error("Please input!"));
-        }
-
-        else if (value < 0) {
-            return Promise.reject(new Error("Please input a non-negative number!"));
-        }
-        else if (discountUnit === "2" && value >= 100) {
-            return Promise.reject(new Error("Please input a disscount less than 100% !"));
-        } else if (/[^0-9.,]/.test(value)) {
-            return Promise.reject(new Error("Please input a number"));
-        }
-        return Promise.resolve();
+  useEffect(() => {
+    if (!visible) {
+      form.resetFields();
     }
+  }, [form, visible]);
 
-    const handleOk = async () => {
-        setLoading(true);
-        try {
-            let values = await form.validateFields();
+  useEffect(() => {
+    // Update existing promotion codes when promotion data changes
+    if (promotionData) {
+      const codes = promotionData.map((promo) => promo.code);
+      setExistingPromotionCodes(codes);
+    }
+  }, [promotionData]);
 
+  const validatePromotionCode = (_, value) => {
+    if (existingPromotionCodes.includes(value)) {
+      return Promise.reject(new Error("This promotion code is already used!"));
+    }
+    return Promise.resolve();
+  };
 
-            const formatData = {
-                ...values,
-                DiscountPercentage: discountUnit === "2" ? values.Discount : 0,
-                FixedDiscountAmount: discountUnit === "1" ? values.Discount : 0,
-                StartDate: convertDateStringToTimeStamp(datePicker[0]),
-                EndDate: convertDateStringToTimeStamp(datePicker[1]),
-                PromotionStatuses: "Active"
-            }
-            console.log(formatData);
-            await onCreate(formatData); // Thêm sản phẩm vào danh sách
-            form.resetFields(); // Reset form sau khi tạo thành công
-            setLoading(false);
-            setDatePicker([]);
-            setDatePickerDayjs([]);
-            setIsModalOpen(false); // Đóng modal sau khi tạo thành công
-        } catch (error) {
-            console.log("Validation Failed:", error);
-            setLoading(false);
-        }
-    };
+  const handleCreate = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        const [startDate, endDate] = values.dates;
+        const promotionData = {
+          ...values,
+          startDate: startDate.format("YYYY-MM-DD"),
+          endDate: endDate.format("YYYY-MM-DD"),
+        };
+        delete promotionData.dates;
+        onCreate(promotionData);
+        form.resetFields(); // Reset fields after successful creation
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
 
+  return (
+    <div className="create-promotion-page">
+      <Modal
+        visible={visible}
+        title="Create a new promotion"
+        okText="Create"
+        cancelText="Cancel"
+        onCancel={onCancel}
+        okButtonProps={{ loading }}
+        onOk={handleCreate}
+      >
+        <Form
+          form={form}
+          name="form_in_modal"
+          initialValues={{
+            modifier: "public",
+          }}
+        >
+          <Row>
+            <Col span={8}>
+              <p>Name:</p>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the name of the promotion!",
+                  },
+                ]}
+              >
+                <Input placeholder="Input the promotion name..." />
+              </Form.Item>
+            </Col>
 
-    return (
-        <>
-            <ButtonCreatePromotion contentBtn={"Add Promotion"} onClick={showModal} />
-            <Modal
-                open={isModalOpen}
-                title={
-                    <div
-                        style={{
-                            fontFamily: 'Playfair Display',
-                            textAlign: "center",
-                            fontSize: "25px",
-                            fontWeight: "initial",
-                            color: "#333333",
-                        }}
-                    >
-                        Create a new Promotion
-                    </div>
-                }
-                okText="Create"
-                cancelText="Cancel"
-                okButtonProps={{ loading }}
-                onCancel={handleCancelModal}
-                onOk={handleOk}
-            >
-                <Form
-                    {...formItemLayout}
-                    form={form}
-                    style={{ maxWidth: 600 }}
-                >
-                    <Form.Item
-                        label="Code"
-                        name="PromotionCode"
-                        rules={[{ required: true, message: 'Please input!' }]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Discount"
-                        name="Discount"
-                        rules={[
+            <Col span={8}>
+              <p>Code:</p>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="code"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the code of the promotion!",
+                  },
+                  {
+                    validator: validatePromotionCode,
+                  },
+                ]}
+              >
+                <Input placeholder="Input the promotion code..." />
+              </Form.Item>
+            </Col>
 
-                            { validator: handleValidateDiscount }
+            <Col span={8}>
+              <p>Discount Percent:</p>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="percent"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the discount percent!",
+                  },
+                  {
+                    type: "number",
+                    min: 1,
+                    max: 100,
+                    message: "Percent must be between 1 and 100!",
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder="Input the discount percent..."
+                  style={{ width: "100%" }}
+                  formatter={(value) => `${value}%`}
+                  parser={(value) => value.replace("%", "")}
+                />
+              </Form.Item>
+            </Col>
 
-                        ]}
-                    >
-                        <Input
-                            placeholder="Input the discount" addonAfter={
-                                <Form.Item
-                                    name="DiscountUnit"
-                                    noStyle
-                                >
-                                    <Select
-                                        defaultValue={discountUnit}
-                                        style={{ width: 80 }}
-                                        onChange={(value) => {
-                                            setDiscountUnit(value);
-                                        }}
-                                    >
-                                        <Option value="1">VND</Option>
-                                        <Option value="2">%</Option>
-                                    </Select>
+            <Col span={8}>
+              <p>Dates:</p>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                name="dates"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the start and end dates!",
+                  },
+                ]}
+              >
+                <RangePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
 
-                                </Form.Item>
-                            }
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Date"
-                        rules={[{ required: true, message: 'Please input!' }]}
-                    >
-                        <RangePicker value={datePickerDayjs} format={"DD-MM-YYYY"} onChange={(date, dateString) => {
-                            setDatePicker(dateString);
-                            setDatePickerDayjs(date);
-                            
-
-                        }} />
-                    </Form.Item>
-
-
-                    {/* <Form.Item
-                        wrapperCol={{ offset: 6, span: 16 }}
-                    >
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item> */}
-                </Form>
-            </Modal>
-        </>
-    );
-}
+export default CreatePromotionModal;
