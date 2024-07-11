@@ -2,11 +2,13 @@ import { Dropdown, Menu, Popconfirm, Space, Table } from "antd";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import React from "react";
 import { RiUserFill } from "@remixicon/react";
+import { useNavigate } from 'react-router-dom';
 import { useDeleteCustomerMutation } from "../../../services/customerAPI";
 import { notification } from "antd";
 
 export default function CustomerList({ customerData, loading, handleEdit, refetch }) {
   const [deleteCustomer] = useDeleteCustomerMutation();
+  const navigate = useNavigate();
 
   const handleRemoveCustomer = async (customerId) => {
     try {
@@ -33,7 +35,7 @@ export default function CustomerList({ customerData, loading, handleEdit, refetc
       <Menu.Item
         key="detail"
         className="submenu-usertable"
-        // onClick={() => navigate(`/employee/${record.EmployeeId}`)}
+        onClick={() => navigate(`/view-customer-detail/${record.id}`)}
       >
         <span>View Detail</span>
       </Menu.Item>
@@ -44,19 +46,6 @@ export default function CustomerList({ customerData, loading, handleEdit, refetc
         onClick={() => handleEdit(record)}
       >
         <span>Edit Customer</span>
-      </Menu.Item>
-
-      <Menu.Item key="remove">
-        <Popconfirm
-          title="Are you sure you want to remove this user?"
-          onConfirm={() => handleRemoveCustomer(record.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <p className="submenu-usertable-dropdown-delete">
-            <span>Remove Customer</span>
-          </p>
-        </Popconfirm>
       </Menu.Item>
     </Menu>
   );
@@ -78,40 +67,23 @@ export default function CustomerList({ customerData, loading, handleEdit, refetc
       key: "phone",
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
       title: "Address",
       dataIndex: "address",
       key: "address",
     },
     {
       title: <div style={{ textAlign: "center" }}>Gender</div>,
-      dataIndex: "customerGender",
-      key: "Gender",
-      render: (customerGender) =>
-        customerGender === 0 ? (
-          <div style={{ textAlign: "center" }}>
-            <i className="ri-user-fill" style={{ color: "#4f6c95" }}>
-              <RiUserFill />
-            </i>
-          </div>
-        ) : (
-          <div style={{ textAlign: "center" }}>
-            <i className="ri-user-fill" style={{ color: "#cc5e58" }}>
-              <RiUserFill />
-            </i>
-          </div>
-        ),
-    },
-    {
-      title: <div style={{ textAlign: "center" }}>Accumulated Point</div>,
-      dataIndex: "accumulatedPoint",
-      key: "accumulatedPoint",
-      render: (accumulatedPoint) => (
-        <div style={{ textAlign: "center" }}>{accumulatedPoint}</div>
+      dataIndex: "gender", 
+      key: "gender",
+      render: (gender) => (
+        <div style={{ textAlign: "center" }}>
+          <i 
+            className="ri-user-fill" 
+            style={{ color: gender === true ? "#4f6c95" : "#cc5e58" }}
+          >
+            <RiUserFill />
+          </i>
+        </div>
       ),
     },
     {

@@ -37,6 +37,9 @@ const Sell = Loadable({
 const ViewProductDetail = Loadable({
   loader: () => import("../pages/product/ProductManagement/ViewProductDetail"),
 });
+const ViewCustomerDetail = Loadable({
+  loader: () => import("../pages/customer/CustomerManage/ViewCustomerDetail"),
+});
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +70,10 @@ export const router = createBrowserRouter([
           {
             path: "customer",
             element: Customer,
+          },
+          {
+            path: "view-customer-detail/:customerId",
+            element: ViewCustomerDetail,
           },
           {
             path: "order",

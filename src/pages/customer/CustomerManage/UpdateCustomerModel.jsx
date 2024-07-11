@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, Row, Col, Radio } from "antd";
+import { Modal, Form, Input, Row, Col, Radio } from "antd";
 import "../Customer.css";
 
 const UpdateCustomerModel = ({
@@ -11,54 +11,37 @@ const UpdateCustomerModel = ({
   customerData,
 }) => {
   const [form] = Form.useForm();
-  // console.log(customer);
+
   useEffect(() => {
     if (visible && customer) {
-      // If in edit mode, set initial values based on the provided customer data
       form.setFieldsValue({
         customerId: customer.customerId,
         name: customer.name,
-        email: customer.email,
         address: customer.address,
         phone: customer.phone,
         customerGender: customer.customerGender,
       });
     } else {
-      // Reset form fields if not in edit mode
       form.resetFields();
     }
   }, [form, visible, customer]);
 
-  const checkEmailExists = (_, email) => {
-    if (!email) {
-      return Promise.reject("Please input the email of the customer!");
-    }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      return Promise.reject("Please input a valid email address!");
-    }
-    const emailExists = customerData.some(
-      (cust) => cust.email === email && cust.id !== customer?.id
-    );
-    if (emailExists) {
-      return Promise.reject("This email is already in use!");
-    }
-    return Promise.resolve();
-  };
-
   const checkPhoneExists = (_, phone) => {
+    console.log("Checking phone:", phone);
     if (!phone) {
-      return Promise.reject("Please input the phone number of the customer!");
+      return Promise.reject("Please input the phone number of the user!");
     }
     const phonePattern = /^[0-9]{10}$/;
     if (!phonePattern.test(phone)) {
       return Promise.reject("Please input a valid 10-digit phone number!");
     }
-    const phoneExists = customerData.some(
-      (cust) => cust.phone === phone && cust.id !== customer?.id
-    );
-    if (phoneExists) {
-      return Promise.reject("This phone number is already in use!");
+    if (Array.isArray(customerData) && customerData.length > 0) {
+      const phoneExists = customerData.some(
+        (customer) => customer.phone === phone
+      );
+      if (phoneExists) {
+        return Promise.reject("This phone number is already in use!");
+      }
     }
     return Promise.resolve();
   };
@@ -76,7 +59,6 @@ const UpdateCustomerModel = ({
           form
             .validateFields()
             .then((values) => {
-              // If in edit mode, include customer ID in the values
               if (customer) {
                 values.id = customer.id;
               }
@@ -123,25 +105,6 @@ const UpdateCustomerModel = ({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <p>Email:</p>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the email of the customer!",
-                  },
-                  {
-                    validator: checkEmailExists,
-                  },
-                ]}
-              >
-                <Input placeholder="Input the email..." />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
               <p>Address:</p>
             </Col>
             <Col span={16}>
@@ -166,7 +129,7 @@ const UpdateCustomerModel = ({
                 rules={[
                   {
                     required: true,
-                    message: "Please input the phone number of the customer!",
+                    message: "",
                   },
                   {
                     validator: checkPhoneExists,

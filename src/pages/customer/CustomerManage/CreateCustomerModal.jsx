@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, Row, Col, Radio } from "antd";
+import { Modal, Form, Input, Radio, Row, Col, notification } from "antd";
 import "../Customer.css";
 
 const CreateCustomerModal = ({
@@ -17,24 +17,13 @@ const CreateCustomerModal = ({
     }
   }, [form, visible]);
 
-  const checkEmailExists = (_, email) => {
-    if (!email) {
-      return Promise.reject("Please input the email of the user!");
-    }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      return Promise.reject("Please input a valid email address!");
-    }
-    const emailExists = customerData.some(
-      (customer) => customer.email === email
-    );
-    if (emailExists) {
-      return Promise.reject("This email is already in use!");
-    }
-    return Promise.resolve();
-  };
+  useEffect(() => {
+    console.log("Customer Data in Modal:", customerData);
+  }, [customerData]);
+
 
   const checkPhoneExists = (_, phone) => {
+    console.log("Checking phone:", phone);
     if (!phone) {
       return Promise.reject("Please input the phone number of the user!");
     }
@@ -42,13 +31,35 @@ const CreateCustomerModal = ({
     if (!phonePattern.test(phone)) {
       return Promise.reject("Please input a valid 10-digit phone number!");
     }
-    const phoneExists = customerData.some(
-      (customer) => customer.phone === phone
-    );
-    if (phoneExists) {
-      return Promise.reject("This phone number is already in use!");
+    if (Array.isArray(customerData) && customerData.length > 0) {
+      const phoneExists = customerData.some(
+        (customer) => customer.phone === phone
+      );
+      if (phoneExists) {
+        return Promise.reject("This phone number is already in use!");
+      }
     }
     return Promise.resolve();
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      values.gender = values.gender === 0;  // Convert to boolean
+      values.accumulatedPoint = 0;
+      console.log("Submitting values:", values);
+      await onCreate(values);
+      notification.success({
+        message: "Customer created successfully!",
+      });
+      onCancel();
+    } catch (error) {
+      console.error("Validation failed:", error);
+      notification.error({
+        message: "Failed to create customer",
+        description: "Please check the form and try again.",
+      });
+    }
   };
 
   return (
@@ -60,17 +71,7 @@ const CreateCustomerModal = ({
         cancelText="Cancel"
         onCancel={onCancel}
         okButtonProps={{ loading }}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              values.AccumulatedPoint = 0;
-              onCreate(values);
-            })
-            .catch((info) => {
-              console.log("Validate Failed:", info);
-            });
-        }}
+        onOk={handleSubmit}
       >
         <Form
           form={form}
@@ -94,25 +95,6 @@ const CreateCustomerModal = ({
                 ]}
               >
                 <Input placeholder="Input the full name..." />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <p>Email:</p>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the email of the customer!",
-                  },
-                  {
-                    validator: checkEmailExists,
-                  },
-                ]}
-              >
-                <Input placeholder="Input the email..." />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -140,7 +122,7 @@ const CreateCustomerModal = ({
                 rules={[
                   {
                     required: true,
-                    message: "Please input the phone number of the customer!",
+                    message: "",
                   },
                   {
                     validator: checkPhoneExists,
@@ -153,7 +135,7 @@ const CreateCustomerModal = ({
             <Col span={8}>Gender</Col>
             <Col span={16}>
               <Form.Item
-                name="customerGender"
+                name="gender"
                 rules={[
                   {
                     required: true,
@@ -167,29 +149,6 @@ const CreateCustomerModal = ({
                 </Radio.Group>
               </Form.Item>
             </Col>
-            {/* <Col span={8}>
-              <p>Accumulated Points:</p>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name="AccumulatedPoint"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the accumulated points!",
-                  },
-                  {
-                    type: "number",
-                    message: "Please input a valid number!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Input accumulated points..."
-                  type="number"
-                />
-              </Form.Item>
-            </Col> */}
           </Row>
         </Form>
       </Modal>
