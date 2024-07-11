@@ -11,7 +11,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fileList, setFileList] = useState([]);
-    // const [imageUrl, setImageUrl] = useState(null);
+    const [imageUrl, setImageUrl] = useState(null);
     // const [pdfUrl, setPdfUrl] = useState(null);
     // const [pdfFileList, setPdfFileList] = useState([]);
     // const [valueStone, setValueStone] = useState('');
@@ -19,7 +19,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
     const [form] = Form.useForm();
 
     const { data: categoryData } = useGetCategoriesQuery();
-
+    
     const formItemLayout = {
         labelCol: {
             xs: { span: 24 },
@@ -52,27 +52,27 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                 // const barcode = generateBarcode(values.type === "dimond" ? 1 : values.type === "gold" ? 2 : 3);
 
                 // Xử lý lấy ra giá thị trường
-                const sellPrice = categoryData.find(category => category.CategoryName === values.Category).SellPricePerGam
+                // const sellPrice = categoryData.find(category => category.CategoryName === values.Category).SellPricePerGam
 
                 values = {
                     ...values,
                     image: imageUrl,
                     // Pdf: pdfUrl,
-                    Barcode: "123",
-                    Price: +values.price,
+                    // Barcode: "123",
+                    price: +values.price,
                     // Weight: +values.Weight,
-                    Quantity: +values.Quantity,
+                    quantity: +values.quantity,
                     // CounterId: +values.CounterId,
                     // StonePrice: +values.StonePrice,
-                    WeightUnit: +values.WeightUnit,
+                    // WeightUnit: +values.WeightUnit,
                 };
                 // console.log(values);
                 await onCreate(values); // Thêm sản phẩm vào danh sách
-                // form.resetFields(); // Reset form sau khi tạo thành công
-                // setFileList([]); // Xoá danh sách file upload
-                // setImageUrl(null); // Xoá ảnh đã upload
+                form.resetFields(); // Reset form sau khi tạo thành công
+                setFileList([]); // Xoá danh sách file upload
+                setImageUrl(null); // Xoá ảnh đã upload
                 setLoading(false);
-                // setIsModalOpen(false); // Đóng modal sau khi tạo thành công
+                setIsModalOpen(false); // Đóng modal sau khi tạo thành công
                 // console.log(productData);
             } else {
                 message.error("Please upload an image.");
@@ -241,23 +241,24 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                     </Form.Item>
 
                     <Form.Item
-                        label="Type"
+                        label="Category"
                         name="categoryId"
                         rules={[{ required: true, message: 'Please select type!' }]}
                     >
                         <Select>
                             {
-                                categoryData?.map(category => <Option key={category?.id} value={category?.CategoryName}>{category?.CategoryName}</Option>)
+                                categoryData?.map(category =>
+                                    <Option key={category?.id} value={category?._id}>{category?.name}</Option>)
                             }
                         </Select>
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Barcode"
                         name="Barcode"
                     >
                         <Input disabled placeholder="Automatically generated" />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         label="Quantity"

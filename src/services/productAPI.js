@@ -47,7 +47,7 @@ export const productAPI = createApi({
         console.log(payload);
         return {
           method: "PUT",
-          url: `api/v1/products/` + payload.id,
+          url: `products/` + payload?._id,
           body: payload,
         };
       },
@@ -56,8 +56,8 @@ export const productAPI = createApi({
     deleteProduct: builder.mutation({
       query: (payload) => {
         return {
-          method: "DELETE",
-          url: `api/v1/products/` + payload,
+          method: "PATCH",
+          url: `products/` + payload,
         };
       },
       invalidatesTags: (_res, _err, _arg) => [

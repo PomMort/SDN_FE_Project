@@ -35,7 +35,7 @@ export default function ViewProductDetail() {
     //     // console.log(productData);
     //     // console.log(productError);
     // }, [productData, productError]);
-
+    // console.log();
 
     const navigate = useNavigate()
     const handleBack = () => {
@@ -77,26 +77,23 @@ export default function ViewProductDetail() {
                                 Name:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.name}</span>
                             </p>
-                            {/* <p>
-                                Barcode:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Barcode}</span>
-                            </p> */}
-                            {/* <p>
-                                Category:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Category}</span>
-                            </p> */}
-                            {/* <p>
-                                Weight:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Weight}</span>
-                            </p> */}
+
                             <p>
                                 Price:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.price}</span>
                             </p>
-                            {/* <p>
-                                Counter:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.CounterId}</span>
-                            </p> */}
+                            <p>
+                                Category:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.categoryId?.name}</span>
+                            </p>
+                            <p>
+                                Description:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.description}</span>
+                            </p>
+                            <p>
+                                Quantity:
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.quantity}</span>
+                            </p>
                         </div>
                     </Content>
                 </Layout>
