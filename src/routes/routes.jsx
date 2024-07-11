@@ -19,6 +19,9 @@ const Promotion = Loadable({
 const Employee = Loadable({
   loader: () => import("../pages/employee/Employee"),
 });
+const UpdatePassword = Loadable({
+  loader: () => import("../pages/home/UpdatePassword"),
+});
 const EmployeeDetail = Loadable({
   loader: () => import("../pages/employee/EmployeeDetail/EmployeeDetail"),
 });
@@ -62,6 +65,10 @@ export const router = createBrowserRouter([
             index: true,
             // path: "",
             element: Home,
+          },
+          {
+            path: "update-password",
+            element: UpdatePassword,
           },
 
           {

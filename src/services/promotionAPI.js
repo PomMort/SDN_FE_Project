@@ -18,7 +18,7 @@ export const promotionAPI = createApi({
   }),
   endpoints: (builder) => ({
     getPromotions: builder.query({
-      query: () => `api/v1/promotions`,
+      query: () => `promotions/getAll`,
       providesTags: (result, _error, _arg) =>
         result
           ? [
@@ -41,34 +41,34 @@ export const promotionAPI = createApi({
       query: (body) => {
         return {
           method: "POST",
-          url: `api/v1/promotions`,
+          url: `promotions/create`,
           body,
         };
       },
       invalidatesTags: [{ type: "PromotionList", id: "LIST" }],
     }),
-    editPromotion: builder.mutation({
-      query: (payload) => {
+
+    updateStatus: builder.mutation({
+      query: ({ id, status }) => {
         return {
           method: "PUT",
-          url: `api/v1/promotions/` + payload.id,
-          body: payload,
+          url: `/promotions/status/${id}`,
+          body: {
+            status: status,
+          },
         };
       },
-      invalidatesTags: (res, err, arg) => [
-        { type: "PromotionList", id: arg.id },
-      ],
+      invalidatesTags: [{ type: "PromotionList", id: "LIST" }],
     }),
-    deletePromotion: builder.mutation({
-      query: (payload) => {
+    updatePromotion: builder.mutation({
+      query: ({ id, body }) => {
         return {
-          method: "DELETE",
-          url: `api/v1/promotions/` + payload,
+          method: "PUT",
+          url: `/promotions/status/${id}`,
+          body: body,
         };
       },
-      invalidatesTags: (_res, _err, _arg) => [
-        { type: "PromotionList", id: "LIST" },
-      ],
+      invalidatesTags: [{ type: "PromotionList", id: "LIST" }],
     }),
   }),
 });
@@ -80,7 +80,7 @@ export const {
   useGetPromotionsQuery,
   useGetPromotionByIdQuery,
   useAddPromotionsMutation,
-  useEditPromotionMutation,
-  useDeletePromotionMutation,
+  useUpdateStatusMutation,
+  useUpdatePromotionMutation,
   useLazyGetPromotionByCodeQuery,
 } = promotionAPI;
