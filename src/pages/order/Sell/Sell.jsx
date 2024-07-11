@@ -228,6 +228,7 @@ export default function Sell() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onCreate={handleCustomerCreate}
+        customerData={customerData?.data}
       />
     </div>
   );
