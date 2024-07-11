@@ -61,7 +61,7 @@ export default function ViewProductDetail() {
                 <Layout>
                     <Sider width="55%" style={siderStyle}>
                         <div className='container-img'>
-                            <img src={productData?.Img}
+                            <img src={productData?.image}
                                 style={{
                                     width: '100%',
                                     height: 'auto',
@@ -75,28 +75,28 @@ export default function ViewProductDetail() {
                         <div style={{ margin: '22px 0px 0px 0px', fontSize: '20px' }}>
                             <p>
                                 Name:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Name}</span>
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.name}</span>
                             </p>
-                            <p>
+                            {/* <p>
                                 Barcode:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Barcode}</span>
-                            </p>
-                            <p>
+                            </p> */}
+                            {/* <p>
                                 Category:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Category}</span>
-                            </p>
-                            <p>
+                            </p> */}
+                            {/* <p>
                                 Weight:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Weight}</span>
-                            </p>
+                            </p> */}
                             <p>
                                 Price:
-                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.Price}</span>
+                                <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.price}</span>
                             </p>
-                            <p>
+                            {/* <p>
                                 Counter:
                                 <span style={{ fontWeight: 'bolder', marginLeft: '10px', fontSize: '23px' }}>{productData?.CounterId}</span>
-                            </p>
+                            </p> */}
                         </div>
                     </Content>
                 </Layout>

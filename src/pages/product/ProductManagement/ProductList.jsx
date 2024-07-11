@@ -115,12 +115,12 @@ export default function ProductList({ productData = [], handldeDeleteProduct, ha
     const data = productData.map((item, index) => ({
         key: index + 1,
         id: item?.id,
-        name: item?.Name,
-        code: item?.Barcode,
-        category: item?.Category,
-        weight: item?.Weight,
-        price: item?.Price,
-        counter: item?.CounterId,
+        name: item?.name,
+        // code: item?.Barcode,
+        // category: item?.Category,
+        // weight: item?.Weight,
+        price: item?.price,
+        // counter: item?.CounterId,
     }));
     const [open, setOpen] = useState(Array(productData.length).fill(false));
 

@@ -37,8 +37,7 @@ export default function Product() {
     }))
 
     ?.filter(product =>
-      product?.Name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      product?.Barcode.toLowerCase().includes(searchInput.toLowerCase()),
+      product?.name.toLowerCase().includes(searchInput.toLowerCase())
     );
 
   const handleAddProduct = async (values) => {

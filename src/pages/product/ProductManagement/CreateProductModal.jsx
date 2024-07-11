@@ -13,8 +13,8 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
     const [fileList, setFileList] = useState([]);
     // const [imageUrl, setImageUrl] = useState(null);
     // const [pdfUrl, setPdfUrl] = useState(null);
-    const [pdfFileList, setPdfFileList] = useState([]);
-    const [valueStone, setValueStone] = useState('');
+    // const [pdfFileList, setPdfFileList] = useState([]);
+    // const [valueStone, setValueStone] = useState('');
     const [valueProcessing, setValueProcessing] = useState('');
     const [form] = Form.useForm();
 
@@ -46,8 +46,9 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
             let values = await form.validateFields();
 
             const imageUrl = await handleUpload(fileList[0]);
-            const pdfUrl = await handleUpload(pdfFileList[0]);
-            if (imageUrl && pdfUrl) {
+            // const pdfUrl = await handleUpload(pdfFileList[0]);
+            // if(imageUrl && pdfUrl) 
+            if (imageUrl) {
                 // const barcode = generateBarcode(values.type === "dimond" ? 1 : values.type === "gold" ? 2 : 3);
 
                 // Xử lý lấy ra giá thị trường
@@ -55,14 +56,14 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
 
                 values = {
                     ...values,
-                    Img: imageUrl,
-                    Pdf: pdfUrl,
+                    image: imageUrl,
+                    // Pdf: pdfUrl,
                     Barcode: "123",
-                    Price: +values.StonePrice + +values.PriceProcessing + +values.Weight * sellPrice,
-                    Weight: +values.Weight,
+                    Price: +values.price,
+                    // Weight: +values.Weight,
                     Quantity: +values.Quantity,
-                    CounterId: +values.CounterId,
-                    StonePrice: +values.StonePrice,
+                    // CounterId: +values.CounterId,
+                    // StonePrice: +values.StonePrice,
                     WeightUnit: +values.WeightUnit,
                 };
                 // console.log(values);
@@ -128,24 +129,24 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
         }
     ];
 
-    const pdfUploadProps = {
-        name: 'pdf',
-        multiple: false,
-        beforeUpload: (file) => {
-            setPdfFileList([file]);
-            return false;
-        },
-        onRemove: () => {
-            setPdfFileList([]);
-        }
-    };
+    // const pdfUploadProps = {
+    //     name: 'pdf',
+    //     multiple: false,
+    //     beforeUpload: (file) => {
+    //         setPdfFileList([file]);
+    //         return false;
+    //     },
+    //     onRemove: () => {
+    //         setPdfFileList([]);
+    //     }
+    // };
 
-    const pdfUploadRules = [
-        {
-            required: true,
-            message: 'Please upload a PDF!'
-        }
-    ];
+    // const pdfUploadRules = [
+    //     {
+    //         required: true,
+    //         message: 'Please upload a PDF!'
+    //     }
+    // ];
 
     const handleValidateQuantity = (_, value) => {
         if (value < 0) {
@@ -161,25 +162,25 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
         return Promise.resolve();
     };
 
-    const handleValidateWeight = (_, value) => {
-        if (!value) {
-            return Promise.reject(new Error("Please input Weight of product!"));
-        }
-        const parsedValue = parseFloat(value.replace(',', '.'));
-        if (isNaN(parsedValue)) {
-            return Promise.reject(new Error("Please input a valid Weight of product!"));
-        }
-        if (parsedValue < 0) {
-            return Promise.reject(new Error("Please input a non-negative number!"));
-        }
-        return Promise.resolve();
-    };
+    // const handleValidateWeight = (_, value) => {
+    //     if (!value) {
+    //         return Promise.reject(new Error("Please input Weight of product!"));
+    //     }
+    //     const parsedValue = parseFloat(value.replace(',', '.'));
+    //     if (isNaN(parsedValue)) {
+    //         return Promise.reject(new Error("Please input a valid Weight of product!"));
+    //     }
+    //     if (parsedValue < 0) {
+    //         return Promise.reject(new Error("Please input a non-negative number!"));
+    //     }
+    //     return Promise.resolve();
+    // };
 
-    const handlePriceChange = (e) => {
-        let inputValue = e.target.value.replace(/\D/g, ''); // Loại bỏ tất cả ký tự không phải số
-        inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Thêm dấu phẩy
-        setValueStone(inputValue);
-    };
+    // const handlePriceChange = (e) => {
+    //     let inputValue = e.target.value.replace(/\D/g, ''); // Loại bỏ tất cả ký tự không phải số
+    //     inputValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Thêm dấu phẩy
+    //     setValueStone(inputValue);
+    // };
 
     const handlePriceChangeProcessing = (e) => {
         let inputValuePriceProcessing = e.target.value.replace(/\D/g, ''); // Loại bỏ tất cả ký tự không phải số
@@ -233,7 +234,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                 >
                     <Form.Item
                         label="Product Name"
-                        name="Name"
+                        name="name"
                         rules={[{ required: true, message: 'Please input!' }]}
                     >
                         <Input />
@@ -241,7 +242,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
 
                     <Form.Item
                         label="Type"
-                        name="Category"
+                        name="categoryId"
                         rules={[{ required: true, message: 'Please select type!' }]}
                     >
                         <Select>
@@ -260,13 +261,13 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
 
                     <Form.Item
                         label="Quantity"
-                        name="Quantity"
+                        name="quantity"
                         rules={[{ validator: handleValidateQuantity }]}
                     >
                         <Input />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Weight"
                         name="Weight"
                         rules={[{ validator: handleValidateWeight }]}
@@ -283,8 +284,8 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                                 </Select>
                             </Form.Item>
                         } />
-                    </Form.Item>
-                    <Form.Item
+                    </Form.Item> */}
+                    {/* <Form.Item
                         name="StonePrice"
                         label="Price(Stone)"
                         rules={[
@@ -297,10 +298,10 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                             value={valueStone}
                             onChange={handlePriceChange}
                         />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
-                        name="PriceProcessing"
-                        label="Price(Processing)"
+                        name="price"
+                        label="Price"
                         rules={[
                             { validator: handleValidatePrice },
                         ]}
@@ -316,7 +317,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
 
                     <Form.Item
                         label="Description"
-                        name="Description"
+                        name="description"
                         rules={[{
                             required: true, message: "Please input description"
                         }]}
@@ -324,7 +325,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                         <Input.TextArea rows={4} />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Counter"
                         name="CounterId"
                         rules={[
@@ -337,11 +338,11 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                             <Option value="3">Counter 3</Option>
                             <Option value="4">Counter 4</Option>
                         </Select>
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         label="Upload Image"
-                        name="Img"
+                        name="image"
                         rules={uploadRules}
                     >
                         <Upload {...uploadProps} fileList={fileList} onChange={() => {
@@ -352,7 +353,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
 
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Upload PDF"
                         name="Pdf"
                         rules={pdfUploadRules}
@@ -363,7 +364,7 @@ const CreateProductModal = ({ onCancel, onCreate, }) => {
                             }}>
                             <Button icon={<UploadOutlined />} >Click to Upload PDF</Button>
                         </Upload>
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal>
         </>
