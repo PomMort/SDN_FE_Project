@@ -7,10 +7,15 @@ import {
   UsergroupDeleteOutlined,
   PercentageOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../slices/auth.slice";
 
 const useSider = () => {
+  const auth = useSelector(selectAuth);
+  const isAdmin = auth?.isAdmin;
+
   const siderList = useMemo(() => {
-    return [
+    const baseItems = [
       {
         label: "Home",
         icon: <HomeOutlined />,
@@ -31,26 +36,27 @@ const useSider = () => {
         icon: <UsergroupDeleteOutlined />,
         href: "customer",
       },
-
-      {
-        label: "Employee",
-        icon: <UserOutlined />,
-        href: "employee",
-      },
-
-      {
-        label: "Promotion",
-        icon: <PercentageOutlined />,
-        href: "promotion",
-      },
-
-      // {
-      //   label: "Setting",
-      //   icon: <FieldTimeOutlined />,
-      //   href: "Setting",
-      // },
     ];
-  }, []);
+
+    if (isAdmin) {
+      // Add Employee item only if isAdmin is true
+      baseItems.push(
+        {
+          label: "Employee",
+          icon: <UserOutlined />,
+          href: "employee",
+        },
+        {
+          label: "Promotion",
+          icon: <PercentageOutlined />,
+          href: "promotion",
+        }
+      );
+    }
+
+    return baseItems;
+  }, [isAdmin]);
+
   return siderList;
 };
 

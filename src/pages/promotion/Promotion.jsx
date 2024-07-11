@@ -1,54 +1,60 @@
-import React from "react";
-
-import '../promotion/Promotion.css';
-
-import { Input, notification, Spin } from "antd";
+import React, { useState } from "react";
+import "../promotion/Promotion.css";
+import { Input, notification, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import PromotionList from "../promotion/PromotionManagement/PromotionList";
 import ButtonFilter from "../../components/ButtonFilter/ButtonFilter";
-// import CreateProductModal from './ProductManagement/CreateProductModal';
-import CreatePomotionModal from "./PromotionManagement/CreatePromotionModal";
-import { useEditPromotionMutation, useGetPromotionsQuery } from '../../services/promotionAPI';
-import { useAddPromotionsMutation } from "../../services/promotionAPI";
-
+import {
+  useGetPromotionsQuery,
+  useUpdatePromotionMutation,
+  useUpdateStatusMutation,
+  useAddPromotionsMutation,
+} from "../../services/promotionAPI";
+import CreatePromotionModal from "./PromotionManagement/CreatePromotionModal";
 
 export default function Promotion() {
   const { data: promotionData, refetch, isFetching } = useGetPromotionsQuery();
-  const [addPromotionMutation, { isLoading: isLoadingAdd }] = useAddPromotionsMutation();
-  const [editPromotionMutation, { isLoading: isLoadingEdit }] = useEditPromotionMutation();
+  const [addPromotion, { isLoading: isAdding }] = useAddPromotionsMutation();
+  const [updatePromotion, { isLoading: isUpdating }] =
+    useUpdatePromotionMutation();
+  const [updateStatus] = useUpdateStatusMutation();
+  const [modalVisible, setModalVisible] = useState(false);
 
-
-  const handleCreatePomotion = async (values) => {
-    // console.log(values);
+  const handleCreatePromotion = async (values) => {
     try {
-      await addPromotionMutation(values).unwrap();
-      notification.success({
-        message: "Create promotion successfully !!!",
-      });
+      await addPromotion(values).unwrap();
+      notification.success({ message: "Promotion created successfully!" });
+      setModalVisible(false);
       refetch();
     } catch (error) {
-      console.log(error);
-      notification.error({
-        message: "Create promotion failed !!!",
-      });
-    }
-  }
-  const handleEditPromotion = async (values, mode = 'update') => {
-    try {
-      await editPromotionMutation(values).unwrap();
-      notification.success({
-        message: `${mode === 'delete' ? 'Delete' : 'Update'} promotion successfully !!!`,
-      });
-      refetch();
-    } catch (error) {
-      console.log(error);
-      notification.error({
-        message: `${mode === 'delete' ? 'Delete' : 'Update'} promotion failed !!!`,
-
-      });
+      console.error("Failed to create promotion:", error);
+      notification.error({ message: error.data.description });
     }
   };
 
+  const handleStatusChange = async (promotionId, status) => {
+    try {
+      await updateStatus({ id: promotionId, status }).unwrap();
+      notification.success({
+        message: "Promotion status updated successfully!",
+      });
+      refetch();
+    } catch (error) {
+      console.error("Failed to update promotion status:", error);
+      notification.error({ message: error.data.description });
+    }
+  };
+
+  const handleEditPromotion = async (promotionId, values) => {
+    try {
+      await updatePromotion({ id: promotionId, ...values }).unwrap();
+      notification.success({ message: "Promotion updated successfully!" });
+      refetch();
+    } catch (error) {
+      console.error("Failed to update promotion:", error);
+      notification.error({ message: error.data.description });
+    }
+  };
 
   return (
     <div className="container">
@@ -61,27 +67,32 @@ export default function Promotion() {
             size="large"
             placeholder="Search by name or barcode"
             prefix={<SearchOutlined />}
-          // value={searchInput}
-          // onChange={handleSearchInputChange}
           />
-          <ButtonFilter contentBtn={"Filter"} />
         </div>
         <div className="edit-header-button">
           <div className="action-right">
-            <div>
-              <CreatePomotionModal
-                onCreate={handleCreatePomotion}
-              />
-            </div>
+            <Button type="primary" onClick={() => setModalVisible(true)}>
+              Create Promotion
+            </Button>
           </div>
         </div>
       </div>
 
       <div>
-        {/* <PromotionList productData={filteredProducts} /> */}
-        <PromotionList promotionData={promotionData} handleEditPromotion={handleEditPromotion} />
-
+        <PromotionList
+          promotionData={promotionData}
+          handleEditPromotion={handleEditPromotion}
+          handleStatusChange={handleStatusChange}
+        />
       </div>
+
+      <CreatePromotionModal
+        visible={modalVisible}
+        onCreate={handleCreatePromotion}
+        onCancel={() => setModalVisible(false)}
+        loading={isAdding}
+        promotionData={promotionData}
+      />
     </div>
   );
 }
