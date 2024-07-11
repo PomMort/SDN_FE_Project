@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Select, DatePicker, Row, Col, Radio } from "antd";
+import { Modal, Form, Input, Row, Col, Radio } from "antd";
 import "../Employee.css";
-
-const { Option } = Select;
 
 const CreateEmployeeModal = ({
   visible,
@@ -21,43 +19,28 @@ const CreateEmployeeModal = ({
     }
   }, [form, visible]);
 
-  const checkEmailExists = (_, email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-      return Promise.reject("Please input the email of the user!");
+  const validateEmail = async (_, value) => {
+    if (!value || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+      return Promise.reject(new Error("Invalid email format"));
     }
-    if (!emailPattern.test(email)) {
-      return Promise.reject("Please input a valid email address!");
-    }
-
-    const emailExists = employeesData.data.some(
-      (employee) => employee.email === email
-    );
-
-    if (emailExists) {
-      return Promise.reject("This email is already in use!");
-    }
-
-    return Promise.resolve();
-  };
-
-  const checkPhoneExists = (_, phone) => {
-    if (!phone) {
-      return Promise.reject("Please input the phone number of the user!");
-    }
-    const phonePattern = /^[0-9]{10}$/;
-    if (!phonePattern.test(phone)) {
-      return Promise.reject("Please input a valid 10-digit phone number!");
-    }
-    const phoneExists = employeesData.data.some(
-      (employee) => employee.phone === phone
-    );
-    if (phoneExists) {
-      return Promise.reject("This phone number is already in use!");
+    if (employeesData.some((employee) => employee.email === value)) {
+      return Promise.reject(new Error("Email already exists"));
     }
     return Promise.resolve();
   };
+
+  const validatePhone = async (_, value) => {
+    if (!/^(0\d{9})$/.test(value)) {
+      return Promise.reject(
+        new Error("Phone number must be 10 digits starting with 0")
+      );
+    }
+    if (employeesData.some((employee) => employee.phone === value)) {
+      return Promise.reject(new Error("Phone number already exists"));
+    }
+    return Promise.resolve();
+  };
+
   return (
     <div className="create-employee-page">
       <Modal
@@ -117,9 +100,7 @@ const CreateEmployeeModal = ({
                     required: true,
                     message: "Please input the email of the user!",
                   },
-                  {
-                    validator: checkEmailExists,
-                  },
+                  { validator: validateEmail },
                 ]}
               >
                 <Input placeholder="Input the email..." />
@@ -136,9 +117,7 @@ const CreateEmployeeModal = ({
                     required: true,
                     message: "Please input the phone number of the user!",
                   },
-                  {
-                    validator: checkPhoneExists,
-                  },
+                  { validator: validatePhone },
                 ]}
               >
                 <Input placeholder="Input the phone number..." />
@@ -156,8 +135,8 @@ const CreateEmployeeModal = ({
                 ]}
               >
                 <Radio.Group>
-                  <Radio value={false}> Male </Radio>
-                  <Radio value={true}> Female </Radio>
+                  <Radio value={true}> Male </Radio>
+                  <Radio value={false}> Female </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>

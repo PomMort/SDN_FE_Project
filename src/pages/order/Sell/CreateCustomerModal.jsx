@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Form, Input, Button, Radio, message } from "antd";
 import { useAddCustomerMutation } from "../../../services/orderAPI";
 
-export default function CreateCustomerModal({ visible, onClose, onCreate }) {
+export default function CreateCustomerModal({
+  visible,
+  onClose,
+  onCreate,
+  customerData,
+}) {
   const [form] = Form.useForm();
   const [addCustomer, { isLoading }] = useAddCustomerMutation();
 
@@ -19,6 +24,18 @@ export default function CreateCustomerModal({ visible, onClose, onCreate }) {
     }
   };
 
+  const validatePhone = async (_, value) => {
+    if (customerData.some((customer) => customer.phone === value)) {
+      return Promise.reject(new Error("Phone number already exists"));
+    }
+    return Promise.resolve();
+  };
+  const validateName = async (_, value) => {
+    if (customerData.some((customer) => customer.name === value)) {
+      return Promise.reject(new Error("Name already exists"));
+    }
+    return Promise.resolve();
+  };
   return (
     <Modal
       visible={visible}
@@ -32,6 +49,7 @@ export default function CreateCustomerModal({ visible, onClose, onCreate }) {
           label="Name"
           rules={[
             { required: true, message: "Please enter the customer's name" },
+            { validator: validateName },
           ]}
         >
           <Input placeholder="Enter customer's name" />
@@ -54,6 +72,7 @@ export default function CreateCustomerModal({ visible, onClose, onCreate }) {
               message: "Please enter the customer's phone number",
             },
             { pattern: /^\d+$/, message: "Please enter a valid phone number" },
+            { validator: validatePhone },
           ]}
         >
           <Input placeholder="Enter customer's phone number" />
