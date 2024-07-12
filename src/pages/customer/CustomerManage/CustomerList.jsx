@@ -2,11 +2,16 @@ import { Dropdown, Menu, Popconfirm, Space, Table } from "antd";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import React from "react";
 import { RiUserFill } from "@remixicon/react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useDeleteCustomerMutation } from "../../../services/customerAPI";
 import { notification } from "antd";
 
-export default function CustomerList({ customerData, loading, handleEdit, refetch }) {
+export default function CustomerList({
+  customerData,
+  loading,
+  handleEdit,
+  refetch,
+}) {
   const [deleteCustomer] = useDeleteCustomerMutation();
   const navigate = useNavigate();
 
@@ -32,13 +37,13 @@ export default function CustomerList({ customerData, loading, handleEdit, refetc
 
   const actionsMenu = (record) => (
     <Menu>
-      <Menu.Item
+      {/* <Menu.Item
         key="detail"
         className="submenu-usertable"
         onClick={() => navigate(`/view-customer-detail/${record.id}`)}
       >
         <span>View Detail</span>
-      </Menu.Item>
+      </Menu.Item> */}
 
       <Menu.Item
         key="edit"
@@ -73,13 +78,13 @@ export default function CustomerList({ customerData, loading, handleEdit, refetc
     },
     {
       title: <div style={{ textAlign: "center" }}>Gender</div>,
-      dataIndex: "gender", 
+      dataIndex: "gender",
       key: "gender",
       render: (gender) => (
         <div style={{ textAlign: "center" }}>
-          <i 
-            className="ri-user-fill" 
-            style={{ color: gender === true ? "#4f6c95" : "#cc5e58" }}
+          <i
+            className="ri-user-fill"
+            style={{ color: gender === false ? "#4f6c95" : "#cc5e58" }}
           >
             <RiUserFill />
           </i>

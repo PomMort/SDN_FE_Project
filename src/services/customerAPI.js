@@ -45,7 +45,7 @@ export const customerAPI = createApi({
     }),
     updateCustomer: builder.mutation({
       query: (customer) => ({
-        url: `customers/` + customer.id,
+        url: `customers/` + customer._id,
         method: "PUT",
         body: customer,
       }),

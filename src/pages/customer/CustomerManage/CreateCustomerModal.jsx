@@ -21,7 +21,6 @@ const CreateCustomerModal = ({
     console.log("Customer Data in Modal:", customerData);
   }, [customerData]);
 
-
   const checkPhoneExists = (_, phone) => {
     console.log("Checking phone:", phone);
     if (!phone) {
@@ -45,14 +44,10 @@ const CreateCustomerModal = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      values.gender = values.gender === 0;  // Convert to boolean
-      values.accumulatedPoint = 0;
       console.log("Submitting values:", values);
       await onCreate(values);
-      notification.success({
-        message: "Customer created successfully!",
-      });
-      onCancel();
+
+      // onCancel();
     } catch (error) {
       console.error("Validation failed:", error);
       notification.error({
@@ -144,8 +139,8 @@ const CreateCustomerModal = ({
                 ]}
               >
                 <Radio.Group>
-                  <Radio value={0}> Male </Radio>
-                  <Radio value={1}> Female </Radio>
+                  <Radio value={false}> Male </Radio>
+                  <Radio value={true}> Female </Radio>
                 </Radio.Group>
               </Form.Item>
             </Col>
