@@ -9,7 +9,6 @@ const AuthGuard = ({ allowedRoles, children }) => {
   const auth = useSelector(selectAuth);
   const exp = auth?.exp; //1720494150
   const dispatch = useDispatch();
-  // const tokenWeb = localStorage.getItem("token");
 
   const navigate = useNavigate();
 
@@ -22,7 +21,6 @@ const AuthGuard = ({ allowedRoles, children }) => {
         message: "Session Expired",
         description: "Your session has expired. Please log in again.",
       });
-      // navigate("/login", { replace: true });
     }
     if (!token) {
       navigate("/login");
@@ -33,7 +31,6 @@ const AuthGuard = ({ allowedRoles, children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // If token exists and user is not trying to access restricted routes, allow access
   return <Outlet />;
 };
 

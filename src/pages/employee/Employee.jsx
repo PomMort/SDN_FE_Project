@@ -54,14 +54,14 @@ export default function Employee() {
       const response = await addEmployee(values).unwrap();
 
       console.log(response);
-      if (response.data.status === "success") {
+      if (response.status === "success") {
         message.success("Employee created successfully");
         setIsCreateModalVisible(false);
         refetch();
       } else {
-        console.log(response.error.data.description);
+        console.log(response);
 
-        message.error(response.error.data.description);
+        message.error(response.error.description);
       }
     } catch (error) {
       console.log(error);
@@ -150,7 +150,7 @@ export default function Employee() {
         onCreate={handleCreateEmployee}
         onCancel={() => setIsCreateModalVisible(false)}
         loading={isLoadingAdd}
-        employeesData={employeesData}
+        employeesData={employeesData?.data}
       />
       <UpdateEmployeeModal
         visible={isUpdateModalVisible}

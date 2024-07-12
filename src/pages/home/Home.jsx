@@ -3,11 +3,13 @@ import { useSelector } from "react-redux";
 import { selectAuth } from "../../slices/auth.slice";
 import { Button, Card, Flex, Typography } from "antd";
 import TypePriceTable from "./TypePriceTable";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const Home = () => {
   const auth = useSelector(selectAuth);
+  const navigate = useNavigate();
 
   return (
     <div style={{ width: "100%", padding: "20px" }}>
@@ -23,9 +25,13 @@ const Home = () => {
             <Text>Phone: {auth?.phone}</Text>
             <br />
           </div>
-          <Button type="primary" style={{ marginRight: "10px" }}>
+          {/* <Button
+            onClick={() => navigate("/update-password")}
+            type="primary"
+            style={{ marginRight: "10px" }}
+          >
             Update Password
-          </Button>
+          </Button> */}
         </Flex>
         {/* Add more user information here based on your auth slice */}
       </Card>

@@ -62,6 +62,7 @@ export default function ProductList({ productData = [], handldeDeleteProduct, ha
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
+            render: (text) => `${text} VNĐ`,
         },
         // {
         //     title: 'Quantity',

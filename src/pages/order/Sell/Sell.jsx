@@ -83,8 +83,9 @@ export default function Sell() {
         message.error("Invalid or expired promotion code.");
       }
     } catch (error) {
+      console.log(error);
       setDiscount(0);
-      message.error("Error applying promotion code.");
+      message.error(error.data.message);
     }
   };
 
@@ -228,6 +229,7 @@ export default function Sell() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onCreate={handleCustomerCreate}
+        customerData={customerData?.data}
       />
     </div>
   );
