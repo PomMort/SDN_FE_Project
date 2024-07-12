@@ -34,8 +34,8 @@ export default function Customer() {
     setSearchQuery(e.target.value);
   };
 
-  const filteredCustomer = customerData
-    ?.data.filter(
+  const filteredCustomer = customerData?.data
+    .filter(
       (customer) =>
         customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         customer.phone.includes(searchQuery)
@@ -48,11 +48,14 @@ export default function Customer() {
       await createCustomer(values).unwrap();
       notification.success({
         message: "Create customer successfully !!!",
-      })
+      });
       refetch();
       setIsCreateModalVisible(false);
     } catch (error) {
       console.error("Failed to create customer:", error);
+      notification.error({
+        message: error.data.description,
+      });
     }
     setLoading(false);
   };
@@ -62,10 +65,16 @@ export default function Customer() {
     setLoading(true);
     try {
       await updateCustomer(values).unwrap();
+      notification.success({
+        message: "Update success",
+      });
       refetch();
       setIsUpdateModalVisible(false);
     } catch (error) {
       console.error("Failed to update customer:", error);
+      notification.error({
+        message: error.data.description,
+      });
     }
     setLoading(false);
   };
@@ -119,7 +128,7 @@ export default function Customer() {
         onCancel={() => setIsUpdateModalVisible(false)}
         loading={loading}
         customer={selectedCustomer}
-        customerData={customerData}
+        customerData={customerData.data}
       />
     </div>
   );

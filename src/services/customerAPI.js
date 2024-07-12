@@ -5,7 +5,7 @@ import { selectToken } from "../slices/auth.slice";
 // Define a service using a base URL and expected endpoints
 export const customerAPI = createApi({
   reducerPath: "customerManagement",
-  tagTypes: ["CustomerList"],
+  tagTypes: ["CustomerList", "CustomerDetail"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
@@ -24,16 +24,20 @@ export const customerAPI = createApi({
         result
           ? [
               ...result.data.map(({ id }) => ({
-                type: "customerManagement",
+                type: "CustomerList",
                 id,
               })),
               { type: "CustomerList", id: "LIST" },
             ]
           : [{ type: "CustomerList", id: "LIST" }],
     }),
+    getCustomerById: builder.query({
+      query: (id) => `customers/${id}`,
+      providesTags: (result, error, id) => [{ type: "CustomerDetail", id }],
+    }),
     createCustomer: builder.mutation({
       query: (newCustomer) => ({
-        url: `api/v1/Customer`,
+        url: `customers/add`,
         method: "POST",
         body: newCustomer,
       }),
@@ -41,18 +45,18 @@ export const customerAPI = createApi({
     }),
     updateCustomer: builder.mutation({
       query: (customer) => ({
-        url: `api/v1/Customer/` + customer.id,
+        url: `customers/` + customer._id,
         method: "PUT",
         body: customer,
       }),
       invalidatesTags: (result, _error, { customerId }) => [
-        { type: "customerManagement", id: customerId },
+        { type: "CustomerDetail", id: customerId },
         { type: "CustomerList", id: "LIST" },
       ],
     }),
     deleteCustomer: builder.mutation({
       query: (customerId) => ({
-        url: `api/v1/Customer/` + customerId,
+        url: `customers/` + customerId,
         method: "DELETE",
       }),
       invalidatesTags: [{ type: "CustomerList", id: "LIST" }],
@@ -62,6 +66,7 @@ export const customerAPI = createApi({
 
 export const {
   useGetAllCustomersQuery,
+  useGetCustomerByIdQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,

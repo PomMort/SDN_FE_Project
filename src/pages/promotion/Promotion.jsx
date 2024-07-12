@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "../promotion/Promotion.css";
 import { Input, notification, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -19,6 +19,7 @@ export default function Promotion() {
     useUpdatePromotionMutation();
   const [updateStatus] = useUpdateStatusMutation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleCreatePromotion = async (values) => {
     try {
@@ -56,6 +57,19 @@ export default function Promotion() {
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredPromotions = useMemo(() => {
+    if (!promotionData) return [];
+    return promotionData.filter(
+      (promotion) =>
+        promotion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        promotion.code.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [promotionData, searchTerm]);
+
   return (
     <div className="container">
       <h1>Promotion Page</h1>
@@ -65,8 +79,10 @@ export default function Promotion() {
           <Input
             style={{ borderRadius: 20, width: "350px" }}
             size="large"
-            placeholder="Search by name or barcode"
+            placeholder="Search by name or code"
             prefix={<SearchOutlined />}
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="edit-header-button">
@@ -80,7 +96,7 @@ export default function Promotion() {
 
       <div>
         <PromotionList
-          promotionData={promotionData}
+          promotionData={filteredPromotions}
           handleEditPromotion={handleEditPromotion}
           handleStatusChange={handleStatusChange}
         />

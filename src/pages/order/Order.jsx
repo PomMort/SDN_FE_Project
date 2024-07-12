@@ -36,7 +36,8 @@ export default function Order() {
   const filteredOrderData = useMemo(() => {
     if (!orderData) return [];
     return orderData.filter((order) =>
-      order._id.toString().includes(searchQuery)
+      // order.customerId.name.toLowerCase().toString().includes(searchQuery)
+      order.customerId.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [orderData, searchQuery]);
 
